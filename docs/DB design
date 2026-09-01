@@ -1,0 +1,619 @@
+# NISHIYAMA LENS｜DB設計書 v0.2
+
+## 1. 設計方針
+
+NISHIYAMA LENSのMVPではログイン機能を実装しない。
+
+そのためDBは、
+
+**「ユーザーを管理するDB」ではなく、  
+「西山公園の楽しみ方を組み立てるDB」**
+
+として設計する。
+
+診断は以下の3問で構成する。
+
+1. 誰と行くか
+2. 何を楽しみたいか
+3. どのくらい滞在するか
+
+診断ロジックは、
+
+**誰と × 何を楽しむ → LENS**
+
+**LENS × 滞在時間 → Course**
+
+とする。
+
+撮影写真、GPS現在地、診断回答履歴、個人のTODAY'S FIND達成履歴、来園履歴などはPostgreSQLには保存しない。
+
+---
+
+# 2. テーブル一覧
+
+| テーブル | 役割 |
+|---|---|
+| `lenses` | 診断結果となるLENS |
+| `courses` | LENSごとの時間別おすすめコース |
+| `course_spots` | コースとスポットの紐付け・順番 |
+| `spots` | 西山公園内スポット |
+| `seasons` | 季節・見頃期間 |
+| `todays_finds` | TODAY'S FINDミッション |
+| `red_pandas` | レッサーパンダ個体情報 |
+| `nearby_spots` | 西山公園周辺スポット |
+| `lens_nearby_spots` | LENSと周辺スポットの紐付け |
+| `news` | ニュース |
+| `events` | イベント |
+
+**合計11テーブル**
+
+---
+
+# 3. `lenses`
+
+## 役割
+
+「誰と行くか × 何を楽しみたいか」に対応するLENSを管理する。
+
+### 例
+
+- FAMILY × PANDA
+- COUPLE × PHOTO
+- SOLO × RELAX
+- FRIENDS × SEASON
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `name` | VARCHAR(100) | NO | UNIQUE |
+| `companion` | VARCHAR(30) | NO | 誰と行くか |
+| `interest` | VARCHAR(30) | NO | 楽しみたいこと |
+| `title` | VARCHAR(150) | NO | 日本語タイトル |
+| `title_en` | VARCHAR(150) | YES | 英語タイトル |
+| `description` | TEXT | NO | 日本語説明 |
+| `description_en` | TEXT | YES | 英語説明 |
+| `image_url` | TEXT | YES | メイン画像 |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+### UNIQUE制約
+
+`companion + interest`
+
+---
+
+# 4. `courses`
+
+## 役割
+
+LENSごとの滞在時間別コースを管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `lens_id` | UUID | NO | FK → lenses.id |
+| `name` | VARCHAR(150) | NO | 日本語コース名 |
+| `name_en` | VARCHAR(150) | YES | 英語コース名 |
+| `duration_type` | VARCHAR(30) | NO | 滞在時間区分 |
+| `duration_minutes` | INTEGER | NO | CHECK > 0 |
+| `description` | TEXT | YES | 日本語説明 |
+| `description_en` | TEXT | YES | 英語説明 |
+| `image_url` | TEXT | YES | メイン画像 |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+### UNIQUE制約
+
+`lens_id + duration_type`
+
+---
+
+# 5. `course_spots`
+
+## 役割
+
+コースに含まれるスポットと、その順番を管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `course_id` | UUID | NO | FK → courses.id |
+| `spot_id` | UUID | NO | FK → spots.id |
+| `sort_order` | INTEGER | NO | CHECK > 0 |
+| `stay_minutes` | INTEGER | YES | このコースでの滞在時間 |
+| `walk_minutes_from_previous` | INTEGER | YES | 前地点から徒歩何分 |
+| `note` | VARCHAR(255) | YES | 日本語案内 |
+| `note_en` | VARCHAR(255) | YES | 英語案内 |
+
+### UNIQUE制約
+
+`course_id + sort_order`
+
+---
+
+# 6. `spots`
+
+## 役割
+
+西山公園内の施設・見どころを管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `name` | VARCHAR(150) | NO | 日本語名称 |
+| `name_en` | VARCHAR(150) | YES | 英語名称 |
+| `slug` | VARCHAR(150) | NO | UNIQUE |
+| `category` | VARCHAR(30) | NO | スポット種別 |
+| `description` | TEXT | NO | 日本語紹介 |
+| `description_en` | TEXT | YES | 英語紹介 |
+| `latitude` | DECIMAL(9,6) | NO | 緯度 |
+| `longitude` | DECIMAL(9,6) | NO | 経度 |
+| `image_url` | TEXT | YES | メイン画像 |
+| `stay_minutes` | INTEGER | YES | 標準滞在時間 |
+| `fee_text` | VARCHAR(100) | YES | 日本語料金表示 |
+| `fee_text_en` | VARCHAR(100) | YES | 英語料金表示 |
+| `stroller_accessible` | BOOLEAN | YES | ベビーカー可否 |
+| `has_toilet` | BOOLEAN | YES | トイレ有無 |
+| `has_rest_area` | BOOLEAN | YES | 休憩場所 |
+| `opening_hours` | VARCHAR(255) | YES | 営業時間 |
+| `external_url` | TEXT | YES | 公式URL |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+---
+
+# 7. `seasons`
+
+## 役割
+
+春夏秋冬だけでなく、桜・つつじ・紅葉などの実際の観光シーズンを管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `name` | VARCHAR(100) | NO | 日本語名称 |
+| `name_en` | VARCHAR(100) | YES | 英語名称 |
+| `slug` | VARCHAR(100) | NO | UNIQUE |
+| `season_group` | VARCHAR(20) | NO | SPRING / SUMMER / AUTUMN / WINTER |
+| `start_month` | SMALLINT | NO | CHECK 1〜12 |
+| `start_day` | SMALLINT | YES | 開始日 |
+| `end_month` | SMALLINT | NO | CHECK 1〜12 |
+| `end_day` | SMALLINT | YES | 終了日 |
+| `description` | TEXT | YES | 日本語説明 |
+| `description_en` | TEXT | YES | 英語説明 |
+| `image_url` | TEXT | YES | 季節画像 |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+
+### 補足
+
+見頃時期は毎年変動するため、MVPでは目安期間として扱う。
+
+---
+
+# 8. `todays_finds`
+
+## 役割
+
+LENS・季節・スポットに応じて「今日見つけてほしいもの」を管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `title` | VARCHAR(150) | NO | 日本語タイトル |
+| `title_en` | VARCHAR(150) | YES | 英語タイトル |
+| `description` | TEXT | NO | 日本語ミッション |
+| `description_en` | TEXT | YES | 英語ミッション |
+| `season_id` | UUID | YES | FK → seasons.id |
+| `spot_id` | UUID | YES | FK → spots.id |
+| `lens_id` | UUID | YES | FK → lenses.id |
+| `effect_type` | VARCHAR(30) | YES | お祝い演出 |
+| `start_at` | TIMESTAMPTZ | YES | 個別公開開始 |
+| `end_at` | TIMESTAMPTZ | YES | 個別公開終了 |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+### 設計意図
+
+`season_id`、`spot_id`、`lens_id`を任意にすることで、
+
+- 全員共通
+- 特定LENS限定
+- 特定スポット限定
+- 特定季節限定
+
+すべてに対応する。
+
+---
+
+# 9. `red_pandas`
+
+## 役割
+
+鯖江市のオープンデータを活用し、西山動物園のレッサーパンダ個体情報を管理する。
+
+## v0.2修正点
+
+DB上でも
+
+**Spot（西山動物園） → RedPanda**
+
+という1対多を表現するため、
+
+`spot_id`
+
+を追加する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `spot_id` | UUID | NO | FK → spots.id |
+| `name` | VARCHAR(100) | NO | 日本語名 |
+| `name_en` | VARCHAR(100) | YES | 英語名 |
+| `sex` | VARCHAR(20) | YES | 性別 |
+| `birth_date` | DATE | YES | 生年月日 |
+| `description` | TEXT | YES | 日本語紹介 |
+| `description_en` | TEXT | YES | 英語紹介 |
+| `image_url` | TEXT | YES | 個体写真 |
+| `father_id` | UUID | YES | FK → red_pandas.id |
+| `mother_id` | UUID | YES | FK → red_pandas.id |
+| `source_url` | TEXT | YES | オープンデータ出典 |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+### リレーション
+
+```text
+Spot（西山動物園）
+ 1
+ │
+ N
+RedPanda
+```
+
+### 家系図
+
+```text
+RedPanda
+ ├── father_id → RedPanda
+ └── mother_id → RedPanda
+```
+
+---
+
+# 10. `nearby_spots`
+
+## 役割
+
+西山公園から鯖江のまちへ回遊するための周辺スポットを管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `name` | VARCHAR(150) | NO | 日本語名称 |
+| `name_en` | VARCHAR(150) | YES | 英語名称 |
+| `slug` | VARCHAR(150) | NO | UNIQUE |
+| `category` | VARCHAR(30) | NO | CAFE / KIDS等 |
+| `description` | TEXT | NO | 日本語紹介 |
+| `description_en` | TEXT | YES | 英語紹介 |
+| `latitude` | DECIMAL(9,6) | NO | 緯度 |
+| `longitude` | DECIMAL(9,6) | NO | 経度 |
+| `address` | VARCHAR(255) | YES | 日本語住所 |
+| `address_en` | VARCHAR(255) | YES | 英語住所 |
+| `image_url` | TEXT | YES | 写真 |
+| `opening_hours` | VARCHAR(255) | YES | 営業時間 |
+| `external_url` | TEXT | YES | 公式サイト |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+---
+
+# 11. `lens_nearby_spots`
+
+## 役割
+
+LENSごとにおすすめする周辺スポットを管理する。
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `lens_id` | UUID | NO | FK → lenses.id |
+| `nearby_spot_id` | UUID | NO | FK → nearby_spots.id |
+| `priority` | INTEGER | NO | DEFAULT 1 |
+| `recommendation_reason` | VARCHAR(255) | YES | 日本語おすすめ理由 |
+| `recommendation_reason_en` | VARCHAR(255) | YES | 英語おすすめ理由 |
+
+### UNIQUE制約
+
+`lens_id + nearby_spot_id`
+
+---
+
+# 12. `news`
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `title` | VARCHAR(200) | NO | 日本語タイトル |
+| `title_en` | VARCHAR(200) | YES | 英語タイトル |
+| `body` | TEXT | NO | 日本語本文 |
+| `body_en` | TEXT | YES | 英語本文 |
+| `image_url` | TEXT | YES | 画像 |
+| `published_at` | TIMESTAMPTZ | YES | 公開日時 |
+| `is_published` | BOOLEAN | NO | DEFAULT false |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+---
+
+# 13. `events`
+
+| カラム | 型 | NULL | 制約・説明 |
+|---|---|---:|---|
+| `id` | UUID | NO | PK |
+| `title` | VARCHAR(200) | NO | 日本語イベント名 |
+| `title_en` | VARCHAR(200) | YES | 英語イベント名 |
+| `description` | TEXT | NO | 日本語説明 |
+| `description_en` | TEXT | YES | 英語説明 |
+| `image_url` | TEXT | YES | 画像 |
+| `start_at` | TIMESTAMPTZ | NO | 開始日時 |
+| `end_at` | TIMESTAMPTZ | YES | 終了日時 |
+| `location` | VARCHAR(200) | YES | 日本語開催場所 |
+| `location_en` | VARCHAR(200) | YES | 英語開催場所 |
+| `external_url` | TEXT | YES | 詳細URL |
+| `is_published` | BOOLEAN | NO | DEFAULT true |
+| `created_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+| `updated_at` | TIMESTAMPTZ | NO | DEFAULT now() |
+
+---
+
+# 14. Enum候補
+
+## CompanionType
+
+- `SOLO`
+- `FRIENDS`
+- `COUPLE`
+- `SMALL_CHILDREN`
+- `FAMILY`
+
+## InterestType
+
+- `PANDA`
+- `SEASON`
+- `PLAY`
+- `PHOTO`
+- `RELAX`
+
+## DurationType
+
+診断選択肢と一致させる。
+
+- `MINUTES_30_60`
+- `HOURS_1_2`
+- `HOURS_2_3`
+- `HALF_DAY`
+
+## SpotCategory
+
+- `ZOO`
+- `PLAYGROUND`
+- `GARDEN`
+- `FLOWER`
+- `VIEW`
+- `REST`
+- `FOOD`
+- `OTHER`
+
+## NearbySpotCategory
+
+- `CAFE`
+- `RESTAURANT`
+- `KIDS`
+- `SIGHTSEEING`
+- `SHOPPING`
+- `RELAX`
+- `OTHER`
+
+## SeasonGroup
+
+- `SPRING`
+- `SUMMER`
+- `AUTUMN`
+- `WINTER`
+
+## EffectType
+
+- `FLOWER`
+- `LEAF`
+- `AUTUMN`
+- `SNOW`
+- `NONE`
+
+---
+
+# 15. ER図
+
+```text
+┌─────────────┐
+│    Lens     │
+└──────┬──────┘
+       │ 1
+       │
+       │ N
+┌──────▼──────┐
+│   Course    │
+└──────┬──────┘
+       │ 1
+       │
+       │ N
+┌──────▼──────────┐
+│   CourseSpot    │
+└──────┬──────────┘
+       │ N
+       │
+       │ 1
+┌──────▼──────┐
+│    Spot     │
+└──────┬──────┘
+       │
+       ├───────────────┐
+       │ 1             │ 1
+       │               │
+       │ N             │ N
+       ▼               ▼
+  RedPanda        Today's Find
+                       ▲
+                       │ N
+                       │
+                       │ 1
+                    Season
+
+
+Lens
+ │
+ │ N
+ ▼
+LensNearbySpot
+ │
+ │ N
+ ▼
+NearbySpot
+
+
+RedPanda
+ ├── father → RedPanda
+ └── mother → RedPanda
+
+
+News
+
+Event
+```
+
+---
+
+# 16. 診断からコース取得まで
+
+```text
+Q1 誰と行く？
+        +
+Q2 何を楽しむ？
+        ↓
+Lensを決定
+
+例：
+SMALL_CHILDREN
++
+PANDA
+↓
+FAMILY × PANDA
+
+
+Lens
++
+Q3 滞在時間
+↓
+Courseを決定
+
+例：
+FAMILY × PANDA
++
+HOURS_2_3
+↓
+親子で楽しむ西山公園2時間コース
+```
+
+---
+
+# 17. DBに保存しないもの
+
+MVPでは以下をPostgreSQLに保存しない。
+
+- ユーザー情報
+- ログイン情報
+- GPS現在地
+- 診断回答履歴
+- 撮影写真
+- TODAY'S FINDの個人達成履歴
+- 来園履歴
+- 閲覧履歴
+
+これらは必要に応じてブラウザ側で一時的に保持する。
+
+---
+
+# 18. DB設計の中心
+
+NISHIYAMA LENSのDBでは、
+
+```text
+LENS
+ ↓
+COURSE
+ ↓
+COURSE SPOT
+ ↓
+SPOT
+```
+
+を中心とする。
+
+さらに、
+
+```text
+SEASON
+ ↓
+TODAY'S FIND
+```
+
+```text
+LENS
+ ↓
+NEARBY SPOT
+```
+
+```text
+SPOT
+ ↓
+RED PANDA
+```
+
+を組み合わせる。
+
+---
+
+# 19. v0.1 → v0.2変更点
+
+1. `red_pandas` テーブルを追加
+2. `red_pandas.spot_id` を追加し、`spots`とのFKを明確化
+3. `father_id` / `mother_id` による家系図構造を追加
+4. 日本語＋English対応カラムを追加
+5. `DurationType` を診断選択肢と一致させた
+6. DB保存対象とブラウザ側一時保持対象を明確化
+
+---
+
+# 20. v0.2確定方針
+
+MVPでは、この11テーブルを基本構成とする。
+
+これにより、
+
+- LENS診断
+- 滞在時間別おすすめコース
+- 現地MAP
+- スポット詳細
+- 季節ごとのTODAY'S FIND
+- レッサーパンダのオープンデータ活用
+- LENS別周辺スポット提案
+- 鯖江への回遊
+- 日本語 / English表示
+
+を実現する。
+
