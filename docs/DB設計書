@@ -1,0 +1,18 @@
+Concept
+なぜ作る？
+「見方を変えると、公園は旅になる」
+        ↓
+PRD
+誰に・どんな体験を届ける？
+        ↓
+診断
+誰と × 興味
+        ↓
+LENS
+        ↓
+LENS × 滞在時間
+        ↓
+Course
+        ↓
+DB
+lenses → courses → course_spots → spots
