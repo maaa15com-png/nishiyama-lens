@@ -1,1 +1,311 @@
-// Database models will be defined in a later issue.
+// use prisma-next
+enum CompanionType {
+  @@type("pg/text@1")
+
+  SOLO = "SOLO"
+  FRIENDS = "FRIENDS"
+  COUPLE = "COUPLE"
+  SMALL_CHILDREN = "SMALL_CHILDREN"
+  FAMILY = "FAMILY"
+}
+
+enum InterestType {
+  @@type("pg/text@1")
+
+  PANDA = "PANDA"
+  SEASON = "SEASON"
+  PLAY = "PLAY"
+  PHOTO = "PHOTO"
+  RELAX = "RELAX"
+}
+
+enum DurationType {
+  @@type("pg/text@1")
+
+  MINUTES_30_60 = "MINUTES_30_60"
+  HOURS_1_2 = "HOURS_1_2"
+  HOURS_2_3 = "HOURS_2_3"
+  HALF_DAY = "HALF_DAY"
+}
+
+enum SpotCategory {
+  @@type("pg/text@1")
+
+  ZOO = "ZOO"
+  PLAYGROUND = "PLAYGROUND"
+  GARDEN = "GARDEN"
+  FLOWER = "FLOWER"
+  VIEW = "VIEW"
+  REST = "REST"
+  FOOD = "FOOD"
+  OTHER = "OTHER"
+}
+
+enum NearbySpotCategory {
+  @@type("pg/text@1")
+
+  CAFE = "CAFE"
+  RESTAURANT = "RESTAURANT"
+  KIDS = "KIDS"
+  SIGHTSEEING = "SIGHTSEEING"
+  SHOPPING = "SHOPPING"
+  RELAX = "RELAX"
+  OTHER = "OTHER"
+}
+
+enum SeasonGroup {
+  @@type("pg/text@1")
+
+  SPRING = "SPRING"
+  SUMMER = "SUMMER"
+  AUTUMN = "AUTUMN"
+  WINTER = "WINTER"
+}
+
+enum EffectType {
+  @@type("pg/text@1")
+
+  FLOWER = "FLOWER"
+  LEAF = "LEAF"
+  AUTUMN = "AUTUMN"
+  SNOW = "SNOW"
+  NONE = "NONE"
+}
+
+model Lens {
+  id            Uuid                 @id
+  name          VarChar(100)         @unique
+  companion     CompanionType
+  interest      InterestType
+  title         VarChar(150)
+  titleEn       VarChar(150)?        @map("title_en")
+  description   String
+  descriptionEn String?              @map("description_en")
+  imageUrl      String?              @map("image_url")
+  isPublished   Boolean              @default(true) @map("is_published")
+  createdAt     Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt     temporal.updatedAt() @map("updated_at")
+  courses       Course[]
+  todaysFinds   TodaysFind[]
+  nearbySpots   LensNearbySpot[]
+
+  @@unique([companion, interest])
+  @@map("lenses")
+}
+
+model Course {
+  id              Uuid                 @id
+  lensId          Uuid                 @map("lens_id")
+  name            VarChar(150)
+  nameEn          VarChar(150)?        @map("name_en")
+  durationType    DurationType         @map("duration_type")
+  durationMinutes Int                  @map("duration_minutes")
+  description     String?
+  descriptionEn   String?              @map("description_en")
+  imageUrl        String?              @map("image_url")
+  isPublished     Boolean              @default(true) @map("is_published")
+  createdAt       Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt       temporal.updatedAt() @map("updated_at")
+  lens            Lens                 @relation(fields:[lensId], references:[id])
+  courseSpots     CourseSpot[]
+
+  @@unique([lensId, durationType])
+  @@index([lensId])
+  @@check(expression: "duration_minutes > 0", name: "courses_duration_minutes_positive")
+  @@map("courses")
+}
+
+model CourseSpot {
+  id                      Uuid          @id
+  courseId                Uuid          @map("course_id")
+  spotId                  Uuid          @map("spot_id")
+  sortOrder               Int           @map("sort_order")
+  stayMinutes             Int?          @map("stay_minutes")
+  walkMinutesFromPrevious Int?          @map("walk_minutes_from_previous")
+  note                    VarChar(255)?
+  noteEn                  VarChar(255)? @map("note_en")
+  course                  Course        @relation(fields:[courseId], references:[id])
+  spot                    Spot          @relation(fields:[spotId], references:[id])
+
+  @@unique([courseId, sortOrder])
+  @@index([courseId])
+  @@index([spotId])
+  @@check(expression: "sort_order > 0", name: "course_spots_sort_order_positive")
+  @@map("course_spots")
+}
+
+model Spot {
+  id                 Uuid                 @id
+  name               VarChar(150)
+  nameEn             VarChar(150)?        @map("name_en")
+  slug               VarChar(150)         @unique
+  category           SpotCategory
+  description        String
+  descriptionEn      String?              @map("description_en")
+  latitude           Numeric(9, 6)
+  longitude          Numeric(9, 6)
+  imageUrl           String?              @map("image_url")
+  stayMinutes        Int?                 @map("stay_minutes")
+  feeText            VarChar(100)?        @map("fee_text")
+  feeTextEn          VarChar(100)?        @map("fee_text_en")
+  strollerAccessible Boolean?             @map("stroller_accessible")
+  hasToilet          Boolean?             @map("has_toilet")
+  hasRestArea        Boolean?             @map("has_rest_area")
+  openingHours       VarChar(255)?        @map("opening_hours")
+  externalUrl        String?              @map("external_url")
+  isPublished        Boolean              @default(true) @map("is_published")
+  createdAt          Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt          temporal.updatedAt() @map("updated_at")
+  courseSpots        CourseSpot[]
+  todaysFinds        TodaysFind[]
+  redPandas          RedPanda[]
+
+  @@map("spots")
+}
+
+model Season {
+  id            Uuid          @id
+  name          VarChar(100)
+  nameEn        VarChar(100)? @map("name_en")
+  slug          VarChar(100)  @unique
+  seasonGroup   SeasonGroup   @map("season_group")
+  startMonth    SmallInt      @map("start_month")
+  startDay      SmallInt?     @map("start_day")
+  endMonth      SmallInt      @map("end_month")
+  endDay        SmallInt?     @map("end_day")
+  description   String?
+  descriptionEn String?       @map("description_en")
+  imageUrl      String?       @map("image_url")
+  isPublished   Boolean       @default(true) @map("is_published")
+  todaysFinds   TodaysFind[]
+
+  @@check(expression: "start_month BETWEEN 1 AND 12", name: "seasons_start_month_range")
+  @@check(expression: "end_month BETWEEN 1 AND 12", name: "seasons_end_month_range")
+  @@map("seasons")
+}
+
+model TodaysFind {
+  id            Uuid                 @id
+  title         VarChar(150)
+  titleEn       VarChar(150)?        @map("title_en")
+  description   String
+  descriptionEn String?              @map("description_en")
+  seasonId      Uuid?                @map("season_id")
+  spotId        Uuid?                @map("spot_id")
+  lensId        Uuid?                @map("lens_id")
+  effectType    EffectType?          @map("effect_type")
+  startAt       Timestamptz(6)?      @map("start_at")
+  endAt         Timestamptz(6)?      @map("end_at")
+  isPublished   Boolean              @default(true) @map("is_published")
+  createdAt     Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt     temporal.updatedAt() @map("updated_at")
+  season        Season?              @relation(fields:[seasonId], references:[id])
+  spot          Spot?                @relation(fields:[spotId], references:[id])
+  lens          Lens?                @relation(fields:[lensId], references:[id])
+
+  @@index([seasonId])
+  @@index([spotId])
+  @@index([lensId])
+  @@map("todays_finds")
+}
+
+model RedPanda {
+  id               Uuid                 @id
+  spotId           Uuid                 @map("spot_id")
+  name             VarChar(100)
+  nameEn           VarChar(100)?        @map("name_en")
+  sex              VarChar(20)?
+  birthDate        Date?                @map("birth_date")
+  description      String?
+  descriptionEn    String?              @map("description_en")
+  imageUrl         String?              @map("image_url")
+  fatherId         Uuid?                @map("father_id")
+  motherId         Uuid?                @map("mother_id")
+  sourceUrl        String?              @map("source_url")
+  isPublished      Boolean              @default(true) @map("is_published")
+  createdAt        Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt        temporal.updatedAt() @map("updated_at")
+  spot             Spot                 @relation(fields:[spotId], references:[id])
+  father           RedPanda?            @relation("RedPandaFather", fields:[fatherId], references:[id])
+  mother           RedPanda?            @relation("RedPandaMother", fields:[motherId], references:[id])
+  childrenAsFather RedPanda[]           @relation("RedPandaFather")
+  childrenAsMother RedPanda[]           @relation("RedPandaMother")
+
+  @@index([spotId])
+  @@index([fatherId])
+  @@index([motherId])
+  @@map("red_pandas")
+}
+
+model NearbySpot {
+  id            Uuid                 @id
+  name          VarChar(150)
+  nameEn        VarChar(150)?        @map("name_en")
+  slug          VarChar(150)         @unique
+  category      NearbySpotCategory
+  description   String
+  descriptionEn String?              @map("description_en")
+  latitude      Numeric(9, 6)
+  longitude     Numeric(9, 6)
+  address       VarChar(255)?
+  addressEn     VarChar(255)?        @map("address_en")
+  imageUrl      String?              @map("image_url")
+  openingHours  VarChar(255)?        @map("opening_hours")
+  externalUrl   String?              @map("external_url")
+  isPublished   Boolean              @default(true) @map("is_published")
+  createdAt     Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt     temporal.updatedAt() @map("updated_at")
+  lenses        LensNearbySpot[]
+
+  @@map("nearby_spots")
+}
+
+model LensNearbySpot {
+  id                     Uuid          @id
+  lensId                 Uuid          @map("lens_id")
+  nearbySpotId           Uuid          @map("nearby_spot_id")
+  priority               Int           @default(1)
+  recommendationReason   VarChar(255)? @map("recommendation_reason")
+  recommendationReasonEn VarChar(255)? @map("recommendation_reason_en")
+  lens                   Lens          @relation(fields:[lensId], references:[id])
+  nearbySpot             NearbySpot    @relation(fields:[nearbySpotId], references:[id])
+
+  @@unique([lensId, nearbySpotId])
+  @@index([lensId])
+  @@index([nearbySpotId])
+  @@map("lens_nearby_spots")
+}
+
+model News {
+  id          Uuid                 @id
+  title       VarChar(200)
+  titleEn     VarChar(200)?        @map("title_en")
+  body        String
+  bodyEn      String?              @map("body_en")
+  imageUrl    String?              @map("image_url")
+  publishedAt Timestamptz(6)?      @map("published_at")
+  isPublished Boolean              @default(false) @map("is_published")
+  createdAt   Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt   temporal.updatedAt() @map("updated_at")
+
+  @@map("news")
+}
+
+model Event {
+  id            Uuid                 @id
+  title         VarChar(200)
+  titleEn       VarChar(200)?        @map("title_en")
+  description   String
+  descriptionEn String?              @map("description_en")
+  imageUrl      String?              @map("image_url")
+  startAt       Timestamptz(6)       @map("start_at")
+  endAt         Timestamptz(6)?      @map("end_at")
+  location      VarChar(200)?
+  locationEn    VarChar(200)?        @map("location_en")
+  externalUrl   String?              @map("external_url")
+  isPublished   Boolean              @default(true) @map("is_published")
+  createdAt     Timestamptz(6)       @default(now()) @map("created_at")
+  updatedAt     temporal.updatedAt() @map("updated_at")
+
+  @@map("events")
+}
