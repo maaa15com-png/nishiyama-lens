@@ -1,0 +1,1675 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.course_spots",
+    "label": "Create table \"course_spots\"",
+    "summary": "Creates table \"course_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "course_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"course_spots\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"course_spots\"",
+        "sql": "CREATE TABLE \"public\".\"course_spots\" (\n  \"course_id\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"note\" character varying(255),\n  \"note_en\" character varying(255),\n  \"sort_order\" int4 NOT NULL,\n  \"spot_id\" uuid NOT NULL,\n  \"stay_minutes\" int4,\n  \"walk_minutes_from_previous\" int4,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"course_spots_sort_order_positive_90621c4e\" CHECK (sort_order > 0)\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"course_spots\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.courses",
+    "label": "Create table \"courses\"",
+    "summary": "Creates table \"courses\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "courses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"courses\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"courses\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"courses\"",
+        "sql": "CREATE TABLE \"public\".\"courses\" (\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"description_en\" text,\n  \"duration_minutes\" int4 NOT NULL,\n  \"duration_type\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"lens_id\" uuid NOT NULL,\n  \"name\" character varying(150) NOT NULL,\n  \"name_en\" character varying(150),\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"courses_duration_minutes_positive_4cddc355\" CHECK (duration_minutes > 0),\n  CONSTRAINT \"courses_duration_type_check_90a23ba8\" CHECK (\"duration_type\" IN ('MINUTES_30_60', 'HOURS_1_2', 'HOURS_2_3', 'HALF_DAY'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"courses\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"courses\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.events",
+    "label": "Create table \"events\"",
+    "summary": "Creates table \"events\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "events"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"events\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"events\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"events\"",
+        "sql": "CREATE TABLE \"public\".\"events\" (\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"description_en\" text,\n  \"end_at\" timestamptz(6),\n  \"external_url\" text,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"location\" character varying(200),\n  \"location_en\" character varying(200),\n  \"start_at\" timestamptz(6) NOT NULL,\n  \"title\" character varying(200) NOT NULL,\n  \"title_en\" character varying(200),\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"events\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"events\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.lens_nearby_spots",
+    "label": "Create table \"lens_nearby_spots\"",
+    "summary": "Creates table \"lens_nearby_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "lens_nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"lens_nearby_spots\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"lens_nearby_spots\"",
+        "sql": "CREATE TABLE \"public\".\"lens_nearby_spots\" (\n  \"id\" uuid NOT NULL,\n  \"lens_id\" uuid NOT NULL,\n  \"nearby_spot_id\" uuid NOT NULL,\n  \"priority\" int4 DEFAULT 1 NOT NULL,\n  \"recommendation_reason\" character varying(255),\n  \"recommendation_reason_en\" character varying(255),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"lens_nearby_spots\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.lenses",
+    "label": "Create table \"lenses\"",
+    "summary": "Creates table \"lenses\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "lenses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"lenses\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lenses\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"lenses\"",
+        "sql": "CREATE TABLE \"public\".\"lenses\" (\n  \"companion\" text NOT NULL,\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"description_en\" text,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"interest\" text NOT NULL,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"name\" character varying(100) NOT NULL,\n  \"title\" character varying(150) NOT NULL,\n  \"title_en\" character varying(150),\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"lenses_companion_check_384aa1d3\" CHECK (\"companion\" IN ('SOLO', 'FRIENDS', 'COUPLE', 'SMALL_CHILDREN', 'FAMILY')),\n  CONSTRAINT \"lenses_interest_check_d61f7203\" CHECK (\"interest\" IN ('PANDA', 'SEASON', 'PLAY', 'PHOTO', 'RELAX'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"lenses\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lenses\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.nearby_spots",
+    "label": "Create table \"nearby_spots\"",
+    "summary": "Creates table \"nearby_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"nearby_spots\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"nearby_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"nearby_spots\"",
+        "sql": "CREATE TABLE \"public\".\"nearby_spots\" (\n  \"address\" character varying(255),\n  \"address_en\" character varying(255),\n  \"category\" text NOT NULL,\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"description_en\" text,\n  \"external_url\" text,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"latitude\" numeric(9,6) NOT NULL,\n  \"longitude\" numeric(9,6) NOT NULL,\n  \"name\" character varying(150) NOT NULL,\n  \"name_en\" character varying(150),\n  \"opening_hours\" character varying(255),\n  \"slug\" character varying(150) NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"nearby_spots_category_check_3b9369dc\" CHECK (\"category\" IN ('CAFE', 'RESTAURANT', 'KIDS', 'SIGHTSEEING', 'SHOPPING', 'RELAX', 'OTHER'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"nearby_spots\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"nearby_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.news",
+    "label": "Create table \"news\"",
+    "summary": "Creates table \"news\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "news"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"news\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"news\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"news\"",
+        "sql": "CREATE TABLE \"public\".\"news\" (\n  \"body\" text NOT NULL,\n  \"body_en\" text,\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT false NOT NULL,\n  \"published_at\" timestamptz(6),\n  \"title\" character varying(200) NOT NULL,\n  \"title_en\" character varying(200),\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"news\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"news\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.red_pandas",
+    "label": "Create table \"red_pandas\"",
+    "summary": "Creates table \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"red_pandas\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"red_pandas\"",
+        "sql": "CREATE TABLE \"public\".\"red_pandas\" (\n  \"birth_date\" date,\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"description_en\" text,\n  \"father_id\" uuid,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"mother_id\" uuid,\n  \"name\" character varying(100) NOT NULL,\n  \"name_en\" character varying(100),\n  \"sex\" character varying(20),\n  \"source_url\" text,\n  \"spot_id\" uuid NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"red_pandas\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.seasons",
+    "label": "Create table \"seasons\"",
+    "summary": "Creates table \"seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"seasons\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"seasons\"",
+        "sql": "CREATE TABLE \"public\".\"seasons\" (\n  \"description\" text,\n  \"description_en\" text,\n  \"end_day\" int2,\n  \"end_month\" int2 NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"name\" character varying(100) NOT NULL,\n  \"name_en\" character varying(100),\n  \"season_group\" text NOT NULL,\n  \"slug\" character varying(100) NOT NULL,\n  \"start_day\" int2,\n  \"start_month\" int2 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"seasons_end_month_range_83d8a391\" CHECK (end_month BETWEEN 1 AND 12),\n  CONSTRAINT \"seasons_season_group_check_8ddc52f9\" CHECK (\"season_group\" IN ('SPRING', 'SUMMER', 'AUTUMN', 'WINTER')),\n  CONSTRAINT \"seasons_start_month_range_bbc43c89\" CHECK (start_month BETWEEN 1 AND 12)\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"seasons\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"seasons\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.spots",
+    "label": "Create table \"spots\"",
+    "summary": "Creates table \"spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"spots\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"spots\"",
+        "sql": "CREATE TABLE \"public\".\"spots\" (\n  \"category\" text NOT NULL,\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"description_en\" text,\n  \"external_url\" text,\n  \"fee_text\" character varying(100),\n  \"fee_text_en\" character varying(100),\n  \"has_rest_area\" bool,\n  \"has_toilet\" bool,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"latitude\" numeric(9,6) NOT NULL,\n  \"longitude\" numeric(9,6) NOT NULL,\n  \"name\" character varying(150) NOT NULL,\n  \"name_en\" character varying(150),\n  \"opening_hours\" character varying(255),\n  \"slug\" character varying(150) NOT NULL,\n  \"stay_minutes\" int4,\n  \"stroller_accessible\" bool,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"spots_category_check_386717d1\" CHECK (\"category\" IN ('ZOO', 'PLAYGROUND', 'GARDEN', 'FLOWER', 'VIEW', 'REST', 'FOOD', 'OTHER'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"spots\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.todays_finds",
+    "label": "Create table \"todays_finds\"",
+    "summary": "Creates table \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"todays_finds\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"todays_finds\"",
+        "sql": "CREATE TABLE \"public\".\"todays_finds\" (\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"description_en\" text,\n  \"effect_type\" text,\n  \"end_at\" timestamptz(6),\n  \"id\" uuid NOT NULL,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"lens_id\" uuid,\n  \"season_id\" uuid,\n  \"spot_id\" uuid,\n  \"start_at\" timestamptz(6),\n  \"title\" character varying(150) NOT NULL,\n  \"title_en\" character varying(150),\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"todays_finds_effect_type_check_352072ad\" CHECK (\"effect_type\" IN ('FLOWER', 'LEAF', 'AUTUMN', 'SNOW', 'NONE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"todays_finds\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.course_spots.course_spots_course_id_sort_order_key",
+    "label": "Add unique constraint on \"course_spots\" (course_id, sort_order)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "course_spots_course_id_sort_order_key",
+        "table": "course_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"course_spots_course_id_sort_order_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spots_course_id_sort_order_key",
+          "public",
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"course_spots_course_id_sort_order_key\"",
+        "sql": "ALTER TABLE \"public\".\"course_spots\" ADD CONSTRAINT \"course_spots_course_id_sort_order_key\" UNIQUE (\"course_id\", \"sort_order\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"course_spots_course_id_sort_order_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spots_course_id_sort_order_key",
+          "public",
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.courses.courses_lens_id_duration_type_key",
+    "label": "Add unique constraint on \"courses\" (lens_id, duration_type)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "courses_lens_id_duration_type_key",
+        "table": "courses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"courses_lens_id_duration_type_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "courses_lens_id_duration_type_key",
+          "public",
+          "\"public\".\"courses\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"courses_lens_id_duration_type_key\"",
+        "sql": "ALTER TABLE \"public\".\"courses\" ADD CONSTRAINT \"courses_lens_id_duration_type_key\" UNIQUE (\"lens_id\", \"duration_type\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"courses_lens_id_duration_type_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "courses_lens_id_duration_type_key",
+          "public",
+          "\"public\".\"courses\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.lens_nearby_spots.lens_nearby_spots_lens_id_nearby_spot_id_key",
+    "label": "Add unique constraint on \"lens_nearby_spots\" (lens_id, nearby_spot_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "lens_nearby_spots_lens_id_nearby_spot_id_key",
+        "table": "lens_nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"lens_nearby_spots_lens_id_nearby_spot_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lens_nearby_spots_lens_id_nearby_spot_id_key",
+          "public",
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"lens_nearby_spots_lens_id_nearby_spot_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"lens_nearby_spots\" ADD CONSTRAINT \"lens_nearby_spots_lens_id_nearby_spot_id_key\" UNIQUE (\"lens_id\", \"nearby_spot_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"lens_nearby_spots_lens_id_nearby_spot_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lens_nearby_spots_lens_id_nearby_spot_id_key",
+          "public",
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.lenses.lenses_name_key",
+    "label": "Add unique constraint on \"lenses\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "lenses_name_key",
+        "table": "lenses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"lenses_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lenses_name_key",
+          "public",
+          "\"public\".\"lenses\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"lenses_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"lenses\" ADD CONSTRAINT \"lenses_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"lenses_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lenses_name_key",
+          "public",
+          "\"public\".\"lenses\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.lenses.lenses_companion_interest_key",
+    "label": "Add unique constraint on \"lenses\" (companion, interest)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "lenses_companion_interest_key",
+        "table": "lenses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"lenses_companion_interest_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lenses_companion_interest_key",
+          "public",
+          "\"public\".\"lenses\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"lenses_companion_interest_key\"",
+        "sql": "ALTER TABLE \"public\".\"lenses\" ADD CONSTRAINT \"lenses_companion_interest_key\" UNIQUE (\"companion\", \"interest\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"lenses_companion_interest_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lenses_companion_interest_key",
+          "public",
+          "\"public\".\"lenses\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.nearby_spots.nearby_spots_slug_key",
+    "label": "Add unique constraint on \"nearby_spots\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "nearby_spots_slug_key",
+        "table": "nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"nearby_spots_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "nearby_spots_slug_key",
+          "public",
+          "\"public\".\"nearby_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"nearby_spots_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"nearby_spots\" ADD CONSTRAINT \"nearby_spots_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"nearby_spots_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "nearby_spots_slug_key",
+          "public",
+          "\"public\".\"nearby_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.seasons.seasons_slug_key",
+    "label": "Add unique constraint on \"seasons\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "seasons_slug_key",
+        "table": "seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"seasons_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "seasons_slug_key",
+          "public",
+          "\"public\".\"seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"seasons_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"seasons\" ADD CONSTRAINT \"seasons_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"seasons_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "seasons_slug_key",
+          "public",
+          "\"public\".\"seasons\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.spots.spots_slug_key",
+    "label": "Add unique constraint on \"spots\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "spots_slug_key",
+        "table": "spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"spots_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "spots_slug_key",
+          "public",
+          "\"public\".\"spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"spots_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"spots\" ADD CONSTRAINT \"spots_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"spots_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "spots_slug_key",
+          "public",
+          "\"public\".\"spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.course_spots.course_spots_course_id_idx_297aaf4e",
+    "label": "Create index \"course_spots_course_id_idx_297aaf4e\" on \"course_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "course_spots_course_id_idx_297aaf4e",
+        "table": "course_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"course_spots_course_id_idx_297aaf4e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spots_course_id_idx_297aaf4e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"course_spots_course_id_idx_297aaf4e\"",
+        "sql": "CREATE INDEX \"course_spots_course_id_idx_297aaf4e\" ON \"public\".\"course_spots\" (\"course_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"course_spots_course_id_idx_297aaf4e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spots_course_id_idx_297aaf4e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.course_spots.course_spots_spot_id_idx_f74e1993",
+    "label": "Create index \"course_spots_spot_id_idx_f74e1993\" on \"course_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "course_spots_spot_id_idx_f74e1993",
+        "table": "course_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"course_spots_spot_id_idx_f74e1993\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spots_spot_id_idx_f74e1993\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"course_spots_spot_id_idx_f74e1993\"",
+        "sql": "CREATE INDEX \"course_spots_spot_id_idx_f74e1993\" ON \"public\".\"course_spots\" (\"spot_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"course_spots_spot_id_idx_f74e1993\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spots_spot_id_idx_f74e1993\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.courses.courses_lens_id_idx_92db1f93",
+    "label": "Create index \"courses_lens_id_idx_92db1f93\" on \"courses\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "courses_lens_id_idx_92db1f93",
+        "table": "courses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"courses_lens_id_idx_92db1f93\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"courses_lens_id_idx_92db1f93\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"courses_lens_id_idx_92db1f93\"",
+        "sql": "CREATE INDEX \"courses_lens_id_idx_92db1f93\" ON \"public\".\"courses\" (\"lens_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"courses_lens_id_idx_92db1f93\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"courses_lens_id_idx_92db1f93\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.lens_nearby_spots.lens_nearby_spots_lens_id_idx_92db1f93",
+    "label": "Create index \"lens_nearby_spots_lens_id_idx_92db1f93\" on \"lens_nearby_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "lens_nearby_spots_lens_id_idx_92db1f93",
+        "table": "lens_nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"lens_nearby_spots_lens_id_idx_92db1f93\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lens_nearby_spots_lens_id_idx_92db1f93\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"lens_nearby_spots_lens_id_idx_92db1f93\"",
+        "sql": "CREATE INDEX \"lens_nearby_spots_lens_id_idx_92db1f93\" ON \"public\".\"lens_nearby_spots\" (\"lens_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"lens_nearby_spots_lens_id_idx_92db1f93\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lens_nearby_spots_lens_id_idx_92db1f93\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.lens_nearby_spots.lens_nearby_spots_nearby_spot_id_idx_e235bfcd",
+    "label": "Create index \"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\" on \"lens_nearby_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "lens_nearby_spots_nearby_spot_id_idx_e235bfcd",
+        "table": "lens_nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\"",
+        "sql": "CREATE INDEX \"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\" ON \"public\".\"lens_nearby_spots\" (\"nearby_spot_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"lens_nearby_spots_nearby_spot_id_idx_e235bfcd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.red_pandas.red_pandas_father_id_idx_f695c6a4",
+    "label": "Create index \"red_pandas_father_id_idx_f695c6a4\" on \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "red_pandas_father_id_idx_f695c6a4",
+        "table": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"red_pandas_father_id_idx_f695c6a4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas_father_id_idx_f695c6a4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"red_pandas_father_id_idx_f695c6a4\"",
+        "sql": "CREATE INDEX \"red_pandas_father_id_idx_f695c6a4\" ON \"public\".\"red_pandas\" (\"father_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"red_pandas_father_id_idx_f695c6a4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas_father_id_idx_f695c6a4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.red_pandas.red_pandas_mother_id_idx_51713653",
+    "label": "Create index \"red_pandas_mother_id_idx_51713653\" on \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "red_pandas_mother_id_idx_51713653",
+        "table": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"red_pandas_mother_id_idx_51713653\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas_mother_id_idx_51713653\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"red_pandas_mother_id_idx_51713653\"",
+        "sql": "CREATE INDEX \"red_pandas_mother_id_idx_51713653\" ON \"public\".\"red_pandas\" (\"mother_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"red_pandas_mother_id_idx_51713653\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas_mother_id_idx_51713653\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.red_pandas.red_pandas_spot_id_idx_f74e1993",
+    "label": "Create index \"red_pandas_spot_id_idx_f74e1993\" on \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "red_pandas_spot_id_idx_f74e1993",
+        "table": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"red_pandas_spot_id_idx_f74e1993\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas_spot_id_idx_f74e1993\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"red_pandas_spot_id_idx_f74e1993\"",
+        "sql": "CREATE INDEX \"red_pandas_spot_id_idx_f74e1993\" ON \"public\".\"red_pandas\" (\"spot_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"red_pandas_spot_id_idx_f74e1993\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"red_pandas_spot_id_idx_f74e1993\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.todays_finds.todays_finds_lens_id_idx_92db1f93",
+    "label": "Create index \"todays_finds_lens_id_idx_92db1f93\" on \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "todays_finds_lens_id_idx_92db1f93",
+        "table": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"todays_finds_lens_id_idx_92db1f93\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds_lens_id_idx_92db1f93\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"todays_finds_lens_id_idx_92db1f93\"",
+        "sql": "CREATE INDEX \"todays_finds_lens_id_idx_92db1f93\" ON \"public\".\"todays_finds\" (\"lens_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"todays_finds_lens_id_idx_92db1f93\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds_lens_id_idx_92db1f93\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.todays_finds.todays_finds_season_id_idx_b4a5a2c6",
+    "label": "Create index \"todays_finds_season_id_idx_b4a5a2c6\" on \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "todays_finds_season_id_idx_b4a5a2c6",
+        "table": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"todays_finds_season_id_idx_b4a5a2c6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds_season_id_idx_b4a5a2c6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"todays_finds_season_id_idx_b4a5a2c6\"",
+        "sql": "CREATE INDEX \"todays_finds_season_id_idx_b4a5a2c6\" ON \"public\".\"todays_finds\" (\"season_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"todays_finds_season_id_idx_b4a5a2c6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds_season_id_idx_b4a5a2c6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.todays_finds.todays_finds_spot_id_idx_f74e1993",
+    "label": "Create index \"todays_finds_spot_id_idx_f74e1993\" on \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "todays_finds_spot_id_idx_f74e1993",
+        "table": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"todays_finds_spot_id_idx_f74e1993\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds_spot_id_idx_f74e1993\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"todays_finds_spot_id_idx_f74e1993\"",
+        "sql": "CREATE INDEX \"todays_finds_spot_id_idx_f74e1993\" ON \"public\".\"todays_finds\" (\"spot_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"todays_finds_spot_id_idx_f74e1993\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"todays_finds_spot_id_idx_f74e1993\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.course_spots.course_spots_course_id_fkey",
+    "label": "Add foreign key \"course_spots_course_id_fkey\" on \"course_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "course_spots_course_id_fkey",
+        "table": "course_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"course_spots_course_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spots_course_id_fkey",
+          "public",
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"course_spots_course_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"course_spots\"\nADD CONSTRAINT \"course_spots_course_id_fkey\"\nFOREIGN KEY (\"course_id\")\nREFERENCES \"public\".\"courses\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"course_spots_course_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spots_course_id_fkey",
+          "public",
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.course_spots.course_spots_spot_id_fkey",
+    "label": "Add foreign key \"course_spots_spot_id_fkey\" on \"course_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "course_spots_spot_id_fkey",
+        "table": "course_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"course_spots_spot_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spots_spot_id_fkey",
+          "public",
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"course_spots_spot_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"course_spots\"\nADD CONSTRAINT \"course_spots_spot_id_fkey\"\nFOREIGN KEY (\"spot_id\")\nREFERENCES \"public\".\"spots\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"course_spots_spot_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spots_spot_id_fkey",
+          "public",
+          "\"public\".\"course_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.courses.courses_lens_id_fkey",
+    "label": "Add foreign key \"courses_lens_id_fkey\" on \"courses\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "courses_lens_id_fkey",
+        "table": "courses"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"courses_lens_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "courses_lens_id_fkey",
+          "public",
+          "\"public\".\"courses\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"courses_lens_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"courses\"\nADD CONSTRAINT \"courses_lens_id_fkey\"\nFOREIGN KEY (\"lens_id\")\nREFERENCES \"public\".\"lenses\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"courses_lens_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "courses_lens_id_fkey",
+          "public",
+          "\"public\".\"courses\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.lens_nearby_spots.lens_nearby_spots_lens_id_fkey",
+    "label": "Add foreign key \"lens_nearby_spots_lens_id_fkey\" on \"lens_nearby_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "lens_nearby_spots_lens_id_fkey",
+        "table": "lens_nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"lens_nearby_spots_lens_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lens_nearby_spots_lens_id_fkey",
+          "public",
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"lens_nearby_spots_lens_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"lens_nearby_spots\"\nADD CONSTRAINT \"lens_nearby_spots_lens_id_fkey\"\nFOREIGN KEY (\"lens_id\")\nREFERENCES \"public\".\"lenses\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"lens_nearby_spots_lens_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lens_nearby_spots_lens_id_fkey",
+          "public",
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.lens_nearby_spots.lens_nearby_spots_nearby_spot_id_fkey",
+    "label": "Add foreign key \"lens_nearby_spots_nearby_spot_id_fkey\" on \"lens_nearby_spots\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "lens_nearby_spots_nearby_spot_id_fkey",
+        "table": "lens_nearby_spots"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"lens_nearby_spots_nearby_spot_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lens_nearby_spots_nearby_spot_id_fkey",
+          "public",
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"lens_nearby_spots_nearby_spot_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"lens_nearby_spots\"\nADD CONSTRAINT \"lens_nearby_spots_nearby_spot_id_fkey\"\nFOREIGN KEY (\"nearby_spot_id\")\nREFERENCES \"public\".\"nearby_spots\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"lens_nearby_spots_nearby_spot_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "lens_nearby_spots_nearby_spot_id_fkey",
+          "public",
+          "\"public\".\"lens_nearby_spots\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.red_pandas.red_pandas_spot_id_fkey",
+    "label": "Add foreign key \"red_pandas_spot_id_fkey\" on \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "red_pandas_spot_id_fkey",
+        "table": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"red_pandas_spot_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "red_pandas_spot_id_fkey",
+          "public",
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"red_pandas_spot_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"red_pandas\"\nADD CONSTRAINT \"red_pandas_spot_id_fkey\"\nFOREIGN KEY (\"spot_id\")\nREFERENCES \"public\".\"spots\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"red_pandas_spot_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "red_pandas_spot_id_fkey",
+          "public",
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.red_pandas.red_pandas_father_id_fkey",
+    "label": "Add foreign key \"red_pandas_father_id_fkey\" on \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "red_pandas_father_id_fkey",
+        "table": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"red_pandas_father_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "red_pandas_father_id_fkey",
+          "public",
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"red_pandas_father_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"red_pandas\"\nADD CONSTRAINT \"red_pandas_father_id_fkey\"\nFOREIGN KEY (\"father_id\")\nREFERENCES \"public\".\"red_pandas\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"red_pandas_father_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "red_pandas_father_id_fkey",
+          "public",
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.red_pandas.red_pandas_mother_id_fkey",
+    "label": "Add foreign key \"red_pandas_mother_id_fkey\" on \"red_pandas\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "red_pandas_mother_id_fkey",
+        "table": "red_pandas"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"red_pandas_mother_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "red_pandas_mother_id_fkey",
+          "public",
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"red_pandas_mother_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"red_pandas\"\nADD CONSTRAINT \"red_pandas_mother_id_fkey\"\nFOREIGN KEY (\"mother_id\")\nREFERENCES \"public\".\"red_pandas\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"red_pandas_mother_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "red_pandas_mother_id_fkey",
+          "public",
+          "\"public\".\"red_pandas\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.todays_finds.todays_finds_season_id_fkey",
+    "label": "Add foreign key \"todays_finds_season_id_fkey\" on \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "todays_finds_season_id_fkey",
+        "table": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"todays_finds_season_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "todays_finds_season_id_fkey",
+          "public",
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"todays_finds_season_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"todays_finds\"\nADD CONSTRAINT \"todays_finds_season_id_fkey\"\nFOREIGN KEY (\"season_id\")\nREFERENCES \"public\".\"seasons\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"todays_finds_season_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "todays_finds_season_id_fkey",
+          "public",
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.todays_finds.todays_finds_spot_id_fkey",
+    "label": "Add foreign key \"todays_finds_spot_id_fkey\" on \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "todays_finds_spot_id_fkey",
+        "table": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"todays_finds_spot_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "todays_finds_spot_id_fkey",
+          "public",
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"todays_finds_spot_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"todays_finds\"\nADD CONSTRAINT \"todays_finds_spot_id_fkey\"\nFOREIGN KEY (\"spot_id\")\nREFERENCES \"public\".\"spots\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"todays_finds_spot_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "todays_finds_spot_id_fkey",
+          "public",
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.todays_finds.todays_finds_lens_id_fkey",
+    "label": "Add foreign key \"todays_finds_lens_id_fkey\" on \"todays_finds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "todays_finds_lens_id_fkey",
+        "table": "todays_finds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"todays_finds_lens_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "todays_finds_lens_id_fkey",
+          "public",
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"todays_finds_lens_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"todays_finds\"\nADD CONSTRAINT \"todays_finds_lens_id_fkey\"\nFOREIGN KEY (\"lens_id\")\nREFERENCES \"public\".\"lenses\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"todays_finds_lens_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "todays_finds_lens_id_fkey",
+          "public",
+          "\"public\".\"todays_finds\""
+        ]
+      }
+    ]
+  }
+]
