@@ -33,9 +33,9 @@ const spotSeeds = [
       "レッサーパンダを中心に動物たちに会える、西山公園を代表するスポット。",
     descriptionEn:
       "A signature spot in Nishiyama Park where visitors can meet red pandas and other animals.",
-    // 鯖江市公式「鯖江市西山動物園」アクセスページの地図座標。
-    latitude: numeric9_6("35.950817"),
-    longitude: numeric9_6("136.179092"),
+    // 鯖江市公式アクセスページの埋め込み地図が示す施設代表点（表示中心ではない）。
+    latitude: numeric9_6("35.950693"),
+    longitude: numeric9_6("136.180883"),
     imageUrl: null,
     stayMinutes: 30,
     feeText: varchar100("無料"),
@@ -56,9 +56,10 @@ const spotSeeds = [
     description: "子どもが体を動かして遊べる遊具エリア。",
     descriptionEn:
       "A playground area where children can enjoy active outdoor play.",
-    // 福井県オープンデータ「西山公園（冒険の森）」の地点座標。
-    latitude: numeric9_6("35.951945"),
-    longitude: numeric9_6("136.183205"),
+    // 鯖江市公式「鯖江百景ボリューム7」のパンダらんど代表点。
+    // https://www.city.sabae.fukui.jp/kanko_sangyo/kankoshisetsu_meisho/sabaehyakkei/sabae-hyakkei-07.html
+    latitude: numeric9_6("35.951933"),
+    longitude: numeric9_6("136.182763"),
     imageUrl: null,
     stayMinutes: 40,
     feeText: null,

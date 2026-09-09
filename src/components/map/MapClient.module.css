@@ -1,0 +1,117 @@
+.frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #d9ddd3;
+  border-radius: 1.5rem;
+  background: #e8ecdf;
+}
+
+.map {
+  width: 100%;
+  height: clamp(420px, 65svh, 720px);
+}
+
+.unavailable {
+  display: flex;
+  min-height: 420px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9ddd3;
+  border-radius: 1.5rem;
+  background: #edf1e7;
+  padding: 2rem;
+  text-align: center;
+}
+
+.message {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 3.5rem;
+  z-index: 2;
+  border-radius: 0.75rem;
+  background: #fffdf8;
+  padding: 0.75rem 1rem;
+  color: #173e30;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  pointer-events: none;
+}
+
+.marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #173e30;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.marker:focus-visible {
+  outline: 3px solid #173e30;
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
+.number {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 3px solid #fffdf8;
+  border-radius: 50%;
+  background: #174a36;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  box-shadow: 0 3px 10px #173e3033;
+}
+
+.name {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 144px;
+  margin-top: 3px;
+  border-radius: 0.4rem;
+  background: #fffdf8;
+  padding: 4px 7px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: normal;
+  box-shadow: 0 2px 6px #173e3026;
+}
+
+.popup {
+  padding: 8px 30px 6px 4px;
+  color: #173e30;
+  overflow-wrap: anywhere;
+}
+
+.popup h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.popup p {
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+
+.frame :global(.mapboxgl-popup-close-button) {
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.frame :global(.mapboxgl-popup) {
+  z-index: 3;
+}
