@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { LensOptionCard } from "./LensOptionCard";
-import {
-  lensQuestions,
-  type LensAnswers,
-  type LensAnswerValue,
-} from "./lens-data";
+import { lensQuestions } from "./lens-data";
+import type {
+  LensAnswers,
+  LensAnswerValue,
+  LensRecommendationInput,
+  LensRecommendationResponse,
+} from "@/lib/lens/types";
 
 const totalSteps = lensQuestions.length;
 
@@ -14,6 +16,7 @@ export function LensDiagnosisClient() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<LensAnswers>({});
   const [completionMessage, setCompletionMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const question = lensQuestions[step];
   const selectedValue = answers[question.key];
@@ -33,7 +36,7 @@ export function LensDiagnosisClient() {
     setCompletionMessage(null);
   }
 
-  function continueDiagnosis() {
+  async function continueDiagnosis() {
     if (!canContinue) {
       return;
     }
@@ -43,10 +46,42 @@ export function LensDiagnosisClient() {
       return;
     }
 
-    console.info("[NISHIYAMA LENS] diagnosis answers", answers);
-    setCompletionMessage(
-      "回答を受け付けました。診断結果は次のIssueで表示します。",
-    );
+    if (!isCompleteAnswers(answers)) {
+      setCompletionMessage("回答内容を確認して、もう一度お試しください。");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setCompletionMessage(null);
+
+    try {
+      const response = await fetch("/api/lens/recommendation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(answers),
+      });
+      const result = (await response.json()) as LensRecommendationResponse;
+
+      if (!response.ok) {
+        console.error("LENS recommendation request failed.", result);
+        setCompletionMessage(
+          result.recommendation === null && result.reason === "INVALID_INPUT"
+            ? "回答内容を確認して、もう一度お試しください。"
+            : "診断できませんでした。時間をおいてもう一度お試しください。",
+        );
+        return;
+      }
+
+      console.info("[NISHIYAMA LENS] recommendation", result);
+      setCompletionMessage(getCompletionMessage(result));
+    } catch (error) {
+      console.error("LENS recommendation request failed.", error);
+      setCompletionMessage(
+        "診断できませんでした。通信環境を確認してもう一度お試しください。",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -110,11 +145,15 @@ export function LensDiagnosisClient() {
             )}
             <button
               type="button"
-              disabled={!canContinue}
+              disabled={!canContinue || isSubmitting}
               onClick={continueDiagnosis}
               className="inline-flex min-h-12 min-w-32 items-center justify-center gap-2 rounded-full bg-[#174a36] px-6 text-sm font-bold text-white shadow-[0_10px_26px_rgba(23,74,54,0.18)] transition duration-200 hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36] disabled:cursor-not-allowed disabled:bg-[#cbd1c8] disabled:text-[#737d76] disabled:shadow-none"
             >
-              {isLastStep ? "結果を見る" : "次へ"}
+              {isSubmitting
+                ? "診断中…"
+                : isLastStep
+                  ? "結果を見る"
+                  : "次へ"}
               <ArrowIcon />
             </button>
           </div>
@@ -122,6 +161,28 @@ export function LensDiagnosisClient() {
       </div>
     </div>
   );
+}
+
+function isCompleteAnswers(
+  answers: LensAnswers,
+): answers is LensRecommendationInput {
+  return Boolean(answers.companion && answers.interest && answers.duration);
+}
+
+function getCompletionMessage(result: LensRecommendationResponse) {
+  if (result.recommendation) {
+    return `「${result.recommendation.lens.name}」のおすすめコースを取得しました。診断結果の表示は次のIssueで実装します。`;
+  }
+
+  if (result.reason === "LENS_NOT_FOUND") {
+    return "この組み合わせの楽しみ方は、ただいま準備中です。";
+  }
+
+  if (result.reason === "COURSE_NOT_FOUND") {
+    return "この滞在時間に合うコースは、ただいま準備中です。";
+  }
+
+  return "診断できませんでした。時間をおいてもう一度お試しください。";
 }
 
 function LensProgress({ step, totalSteps }: { step: number; totalSteps: number }) {
