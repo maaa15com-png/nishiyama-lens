@@ -1,0 +1,260 @@
+.heroLandscape {
+  background:
+    radial-gradient(circle at 72% 18%, rgb(245 229 181 / 45%), transparent 22%),
+    linear-gradient(180deg, #79998b 0%, #9daf94 46%, #496d54 100%);
+}
+
+.heroLandscape::after {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+  content: "";
+  mix-blend-mode: soft-light;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.heroSun {
+  position: absolute;
+  top: 15%;
+  right: 14%;
+  width: clamp(7rem, 15vw, 13rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: rgb(251 235 192 / 45%);
+  filter: blur(2px);
+}
+
+.heroHill {
+  position: absolute;
+  bottom: -14%;
+  border-radius: 50% 50% 0 0;
+  filter: blur(0.2px);
+}
+
+.heroHillBack {
+  right: -18%;
+  width: 92%;
+  height: 66%;
+  background: #557a5e;
+  transform: rotate(-5deg);
+}
+
+.heroHillFront {
+  left: -24%;
+  width: 105%;
+  height: 54%;
+  background: #315e47;
+  transform: rotate(6deg);
+}
+
+.heroTree {
+  position: absolute;
+  bottom: 22%;
+  border-radius: 48% 52% 42% 58%;
+  background: #214d38;
+  box-shadow: inset -2rem -2rem 4rem rgb(9 48 32 / 20%);
+}
+
+.heroTree::after {
+  position: absolute;
+  left: 47%;
+  top: 68%;
+  width: 8%;
+  height: 70%;
+  background: #514d35;
+  content: "";
+}
+
+.heroTreeOne {
+  right: 7%;
+  width: 28%;
+  aspect-ratio: 1;
+}
+
+.heroTreeTwo {
+  right: 28%;
+  bottom: 28%;
+  width: 18%;
+  aspect-ratio: 1;
+  opacity: 0.8;
+}
+
+.heroTreeThree {
+  right: -4%;
+  bottom: 43%;
+  width: 20%;
+  aspect-ratio: 1;
+  opacity: 0.75;
+}
+
+.heroPath {
+  position: absolute;
+  right: 11%;
+  bottom: -12%;
+  width: 17%;
+  height: 58%;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(90deg, #c7b999, #e2d5b8 48%, #b9aa89);
+  opacity: 0.75;
+  transform: perspective(18rem) rotateX(28deg) rotate(15deg);
+}
+
+.featureScene::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(11 43 31 / 4%), rgb(11 43 31 / 36%));
+  content: "";
+}
+
+.featureZoo {
+  background:
+    radial-gradient(circle at 72% 32%, #d49859 0 8%, transparent 8.5%),
+    radial-gradient(circle at 25% 70%, #244d39 0 13%, transparent 13.5%),
+    linear-gradient(135deg, #769582, #315b43);
+}
+
+.featureSeason {
+  background:
+    radial-gradient(circle at 28% 35%, #d3a69d 0 8%, transparent 8.5%),
+    radial-gradient(circle at 72% 64%, #e1c7a3 0 12%, transparent 12.5%),
+    linear-gradient(145deg, #b5c5a1, #617c5f);
+}
+
+.featurePlay {
+  background:
+    linear-gradient(125deg, transparent 47%, rgb(224 199 135 / 78%) 48% 53%, transparent 54%),
+    linear-gradient(145deg, #6f9879, #294f3a);
+}
+
+.featureWalk {
+  background:
+    linear-gradient(105deg, transparent 52%, rgb(218 204 164 / 68%) 53% 61%, transparent 62%),
+    radial-gradient(ellipse at 25% 30%, #789071 0 18%, transparent 18.5%),
+    linear-gradient(145deg, #9aad91, #3d684e);
+}
+
+.pandaScene {
+  background:
+    radial-gradient(circle at 78% 18%, rgb(245 224 169 / 50%), transparent 26%),
+    linear-gradient(140deg, #819980 0%, #456c51 55%, #234b37 100%);
+}
+
+.pandaScene::before {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(115deg, transparent 0 2.7rem, rgb(255 255 255 / 3%) 2.8rem 2.9rem);
+  content: "";
+}
+
+.pandaBranch {
+  position: absolute;
+  left: -10%;
+  bottom: 18%;
+  width: 90%;
+  height: 9%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #6f583e, #443c2d);
+  transform: rotate(-10deg);
+}
+
+.pandaMark {
+  position: absolute;
+  left: 46%;
+  top: 44%;
+  width: clamp(8rem, 26vw, 13rem);
+  aspect-ratio: 1.18;
+  border-radius: 48% 48% 55% 55%;
+  background: #b96038;
+  box-shadow: inset 0 -2rem 3rem rgb(90 34 18 / 28%), 0 2rem 4rem rgb(11 43 31 / 28%);
+  transform: translate(-50%, -50%) rotate(-5deg);
+}
+
+.pandaMark::after {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 66%;
+  height: 70%;
+  border-radius: 50% 50% 46% 46%;
+  background: #f2dcc0;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.pandaEar,
+.pandaEye,
+.pandaNose {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  background: #442d25;
+}
+
+.pandaEar {
+  top: -9%;
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+}
+
+.pandaEarLeft {
+  left: 7%;
+}
+
+.pandaEarRight {
+  right: 7%;
+}
+
+.pandaEye {
+  top: 45%;
+  width: 12%;
+  aspect-ratio: 0.65;
+  border-radius: 999px;
+}
+
+.pandaEyeLeft {
+  left: 29%;
+  transform: rotate(24deg);
+}
+
+.pandaEyeRight {
+  right: 29%;
+  transform: rotate(-24deg);
+}
+
+.pandaNose {
+  left: 50%;
+  bottom: 21%;
+  width: 10%;
+  aspect-ratio: 1.2;
+  border-radius: 50% 50% 60% 60%;
+  transform: translateX(-50%);
+}
+
+.finalRings {
+  background:
+    radial-gradient(circle at 15% 110%, transparent 0 8rem, rgb(23 74 54 / 8%) 8.1rem 8.2rem, transparent 8.3rem 12rem, rgb(23 74 54 / 6%) 12.1rem 12.2rem, transparent 12.3rem),
+    radial-gradient(circle at 95% -20%, transparent 0 9rem, rgb(23 74 54 / 8%) 9.1rem 9.2rem, transparent 9.3rem 14rem, rgb(23 74 54 / 6%) 14.1rem 14.2rem, transparent 14.3rem);
+}
+
+@media (max-width: 639px) {
+  .heroTreeOne {
+    right: -13%;
+    width: 62%;
+  }
+
+  .heroTreeTwo {
+    right: 32%;
+    width: 40%;
+  }
+
+  .heroTreeThree {
+    display: none;
+  }
+
+  .heroPath {
+    right: 4%;
+    width: 34%;
+  }
+}
