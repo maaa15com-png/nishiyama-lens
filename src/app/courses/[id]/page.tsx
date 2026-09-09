@@ -58,6 +58,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                   {spot && <>
                     <p className="mt-5 whitespace-pre-line break-words text-sm leading-8 text-[#53665a] sm:text-base">{spot.description}</p>
                     <SpotAmenities spot={spot} />
+                    <Link href={`/spots/${encodeURIComponent(spot.slug)}`} aria-label={`${spot.name}を詳しく見る`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4">詳しく見る</Link>
                   </>}
                 </article>
                 {index < course.courseSpots.length - 1 && <div aria-hidden="true" className="py-3 pl-10 text-xl text-[#7b857e] sm:pl-12">↓</div>}
