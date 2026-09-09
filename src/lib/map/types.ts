@@ -1,8 +1,9 @@
-﻿import type { FieldOutputTypes } from "../../../prisma/schema.d.ts";
+import type { FieldOutputTypes } from "../../../prisma/schema.d.ts";
 
 export type MapSpot = {
   id: string;
   name: string;
+  slug: string;
   sortOrder: number;
   latitude: number;
   longitude: number;

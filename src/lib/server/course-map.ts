@@ -1,4 +1,4 @@
-﻿import "server-only";
+import "server-only";
 import type { MapSpot } from "@/lib/map/types";
 import { getCourseDetail } from "./course-detail";
 
@@ -16,6 +16,7 @@ export async function getCourseMap(courseId: string) {
     spots.push({
       id: spot.id,
       name: String(spot.name),
+      slug: String(spot.slug),
       sortOrder,
       latitude,
       longitude,

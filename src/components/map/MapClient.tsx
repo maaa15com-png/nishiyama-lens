@@ -76,7 +76,12 @@ export default function MapClient({ spots }: { spots: MapSpot[] }) {
           title.textContent = `${spot.sortOrder} ${spot.name}`;
           const category = document.createElement("p");
           category.textContent = spotCategoryLabels[spot.category];
-          content.append(title, category);
+          const detailLink = document.createElement("a");
+          detailLink.href = `/spots/${encodeURIComponent(spot.slug)}`;
+          detailLink.textContent = "詳しく見る";
+          detailLink.className = "mt-3 inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2";
+          detailLink.setAttribute("aria-label", `${spot.name}を詳しく見る`);
+          content.append(title, category, detailLink);
           const popup = new mapbox.Popup({ offset: 28, maxWidth: "240px" })
             .setDOMContent(content);
           const marker = new mapbox.Marker({ element: button, anchor: "center" })
