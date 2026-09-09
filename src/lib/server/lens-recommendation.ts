@@ -9,7 +9,7 @@ export async function getLensRecommendation(
 ): Promise<LensRecommendationResponse> {
   const lens = await db.orm.public.Lens
     .where({ companion: input.companion, interest: input.interest })
-    .select("id", "name", "companion", "interest")
+    .select("id", "name", "description", "companion", "interest")
     .first();
 
   if (!lens) {
@@ -30,6 +30,7 @@ export async function getLensRecommendation(
       lens: {
         id: lens.id,
         name: String(lens.name),
+        description: lens.description,
         companion: lens.companion,
         interest: lens.interest,
       },
