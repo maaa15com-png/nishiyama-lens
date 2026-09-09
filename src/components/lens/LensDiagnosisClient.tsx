@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LensOptionCard } from "./LensOptionCard";
 import { lensQuestions } from "./lens-data";
@@ -7,12 +8,12 @@ import type {
   LensAnswers,
   LensAnswerValue,
   LensRecommendationInput,
-  LensRecommendationResponse,
 } from "@/lib/lens/types";
 
 const totalSteps = lensQuestions.length;
 
 export function LensDiagnosisClient() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<LensAnswers>({});
   const [completionMessage, setCompletionMessage] = useState<string | null>(null);
@@ -36,7 +37,7 @@ export function LensDiagnosisClient() {
     setCompletionMessage(null);
   }
 
-  async function continueDiagnosis() {
+  function continueDiagnosis() {
     if (!canContinue) {
       return;
     }
@@ -53,35 +54,12 @@ export function LensDiagnosisClient() {
 
     setIsSubmitting(true);
     setCompletionMessage(null);
-
-    try {
-      const response = await fetch("/api/lens/recommendation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(answers),
-      });
-      const result = (await response.json()) as LensRecommendationResponse;
-
-      if (!response.ok) {
-        console.error("LENS recommendation request failed.", result);
-        setCompletionMessage(
-          result.recommendation === null && result.reason === "INVALID_INPUT"
-            ? "回答内容を確認して、もう一度お試しください。"
-            : "診断できませんでした。時間をおいてもう一度お試しください。",
-        );
-        return;
-      }
-
-      console.info("[NISHIYAMA LENS] recommendation", result);
-      setCompletionMessage(getCompletionMessage(result));
-    } catch (error) {
-      console.error("LENS recommendation request failed.", error);
-      setCompletionMessage(
-        "診断できませんでした。通信環境を確認してもう一度お試しください。",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    const searchParams = new URLSearchParams({
+      companion: answers.companion,
+      interest: answers.interest,
+      duration: answers.duration,
+    });
+    router.push(`/lens/result?${searchParams.toString()}`);
   }
 
   return (
@@ -167,22 +145,6 @@ function isCompleteAnswers(
   answers: LensAnswers,
 ): answers is LensRecommendationInput {
   return Boolean(answers.companion && answers.interest && answers.duration);
-}
-
-function getCompletionMessage(result: LensRecommendationResponse) {
-  if (result.recommendation) {
-    return `「${result.recommendation.lens.name}」のおすすめコースを取得しました。診断結果の表示は次のIssueで実装します。`;
-  }
-
-  if (result.reason === "LENS_NOT_FOUND") {
-    return "この組み合わせの楽しみ方は、ただいま準備中です。";
-  }
-
-  if (result.reason === "COURSE_NOT_FOUND") {
-    return "この滞在時間に合うコースは、ただいま準備中です。";
-  }
-
-  return "診断できませんでした。時間をおいてもう一度お試しください。";
 }
 
 function LensProgress({ step, totalSteps }: { step: number; totalSteps: number }) {

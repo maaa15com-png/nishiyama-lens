@@ -43,6 +43,7 @@ export type LensRecommendation = {
   lens: {
     id: string;
     name: string;
+    description: string;
     companion: CompanionType;
     interest: InterestType;
   };
