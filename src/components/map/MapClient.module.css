@@ -40,6 +40,7 @@
 }
 
 .marker {
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -114,4 +115,67 @@
 
 .frame :global(.mapboxgl-popup) {
   z-index: 3;
+}
+
+.nextBadge {
+  display: none;
+}
+
+.nextMarker {
+  z-index: 2;
+}
+
+.nextMarker .number {
+  outline: 3px solid #a57924;
+  outline-offset: 2px;
+}
+
+.nextMarker .nextBadge {
+  display: block;
+  position: absolute;
+  bottom: 50px;
+  border-radius: 6px;
+  padding: 3px 7px;
+  background: #fff3cf;
+  color: #624812;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Keep the coordinate centered, with Spot numbers painted above the open ring. */
+.currentMarker {
+  pointer-events: none;
+  width: 68px;
+  height: 68px;
+  border: 4px solid #2268bb;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 0 2px white, inset 0 0 0 2px white;
+  z-index: 0;
+}
+
+.currentMarker::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 22px;
+  background: #2268bb;
+}
+
+.currentMarker span {
+  position: absolute;
+  bottom: calc(100% + 22px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid #2268bb;
+  border-radius: 5px;
+  padding: 3px 7px;
+  background: white;
+  color: #174b88;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
