@@ -1,30 +1,4 @@
-export type CompanionType =
-  | "SOLO"
-  | "FRIENDS"
-  | "COUPLE"
-  | "SMALL_CHILDREN"
-  | "FAMILY";
-
-export type InterestType =
-  | "PANDA"
-  | "SEASON"
-  | "PLAY"
-  | "PHOTO"
-  | "RELAX";
-
-export type DurationType =
-  | "MINUTES_30_60"
-  | "HOURS_1_2"
-  | "HOURS_2_3"
-  | "HALF_DAY";
-
-export type LensAnswers = {
-  companion?: CompanionType;
-  interest?: InterestType;
-  duration?: DurationType;
-};
-
-export type LensAnswerValue = CompanionType | InterestType | DurationType;
+import type { LensAnswers, LensAnswerValue } from "@/lib/lens/types";
 
 type LensQuestion = {
   key: keyof LensAnswers;
