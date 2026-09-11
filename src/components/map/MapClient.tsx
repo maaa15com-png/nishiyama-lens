@@ -10,7 +10,7 @@ import styles from "./MapClient.module.css";
 
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN?.trim();
 
-export default function MapClient({ spots }: { spots: MapSpot[] }) {
+export default function MapClient({ spots, courseId }: { spots: MapSpot[]; courseId: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const mapboxRef = useRef<typeof import("mapbox-gl/esm") | null>(null);
@@ -77,7 +77,7 @@ export default function MapClient({ spots }: { spots: MapSpot[] }) {
           const category = document.createElement("p");
           category.textContent = spotCategoryLabels[spot.category];
           const detailLink = document.createElement("a");
-          detailLink.href = `/spots/${encodeURIComponent(spot.slug)}`;
+          detailLink.href = `/spots/${encodeURIComponent(spot.slug)}?courseId=${encodeURIComponent(courseId)}`;
           detailLink.textContent = "詳しく見る";
           detailLink.className = "mt-3 inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2";
           detailLink.setAttribute("aria-label", `${spot.name}を詳しく見る`);
@@ -125,7 +125,7 @@ export default function MapClient({ spots }: { spots: MapSpot[] }) {
       mapboxRef.current = null;
       courseMarkers.clear();
     };
-  }, [spots]);
+  }, [spots, courseId]);
 
   useEffect(() => {
     const mapbox = mapboxRef.current;
