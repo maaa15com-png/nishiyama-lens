@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { spotCategoryLabels } from "@/lib/courses/labels";
 import { getSpotDetail } from "@/lib/server/spot-detail";
+import { getTodaysFinds } from "@/lib/server/todays-find";
 
 export const metadata: Metadata = {
   title: "スポット詳細 | NISHIYAMA LENS",
@@ -27,6 +28,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const spot = await getSpotDetail(slug);
   if (!spot) notFound();
+  const todaysFinds = await getTodaysFinds(spot.id);
   const amenities = [
     spot.strollerAccessible === true && "ベビーカーOK",
     spot.hasToilet === true && "トイレあり",
@@ -40,6 +42,14 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
       <h1 id="spot-title" className="mt-5 break-words text-3xl font-medium leading-relaxed sm:text-4xl">{spot.name}</h1>
       <p className="mt-6 whitespace-pre-line break-words text-sm leading-8 text-white/85 sm:text-base">{spot.description}</p>
     </section>
+    {todaysFinds.length > 0 && <section aria-labelledby="todays-find-title" className="mt-8 rounded-3xl border border-[#c8b781] bg-[#f0eddb] p-6 sm:p-8">
+      <p className="text-xs font-bold tracking-[0.18em] text-[#62603b]">TODAY&apos;S FIND</p>
+      <h2 id="todays-find-title" className="mt-2 text-2xl font-medium">今日の発見</h2>
+      <ul className="mt-5 space-y-5">{todaysFinds.map((find) => <li key={find.id} className="rounded-2xl bg-[#fffdf8] p-5 sm:p-6">
+        <h3 className="break-words text-xl font-semibold leading-relaxed">{find.title}</h3>
+        <p className="mt-3 whitespace-pre-line break-words text-sm leading-8 text-[#53665a]">{find.description}</p>
+      </li>)}</ul>
+    </section>}
     {amenities.length > 0 && <section aria-labelledby="amenities-title" className="mt-8 rounded-3xl border border-[#e0e3d9] bg-[#fffdf8] p-6 sm:p-8">
       <h2 id="amenities-title" className="text-xl font-semibold">子連れで過ごすために</h2>
       <ul className="mt-5 flex flex-wrap gap-3">{amenities.map((label) => <li key={label} className="rounded-full bg-[#edf1e7] px-4 py-3 text-sm text-[#365746]">{label}</li>)}</ul>
