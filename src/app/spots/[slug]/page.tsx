@@ -1,3 +1,4 @@
+import { safeExternalUrl } from "@/lib/external-url";
 import { getCourseDetail } from "@/lib/server/course-detail";
 import FindCamera from "@/components/find/FindCamera";
 import type { Metadata } from "next";
@@ -11,14 +12,6 @@ export const metadata: Metadata = {
   title: "スポット詳細 | NISHIYAMA LENS",
   description: "西山公園のスポットと、子連れで過ごすための情報をご紹介します。",
 };
-
-function officialUrl(value: string | null): string | null {
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol) && !url.username && !url.password ? url.href : null;
-  } catch { return null; }
-}
 
 function sexLabel(value: string): string {
   const labels: Record<string, string> = { male: "オス", female: "メス", m: "オス", f: "メス", unknown: "不明" };
@@ -39,7 +32,7 @@ export default async function SpotPage({ params, searchParams }: { params: Promi
     spot.hasToilet === true && "トイレあり",
     spot.hasRestArea === true && "休憩スペースあり",
   ].filter((label): label is string => typeof label === "string");
-  const externalUrl = officialUrl(spot.externalUrl);
+  const externalUrl = safeExternalUrl(spot.externalUrl);
 
   return <>
     <section aria-labelledby="spot-title" className="rounded-[2rem] bg-[#173e30] px-6 py-9 text-white sm:px-10 sm:py-12">

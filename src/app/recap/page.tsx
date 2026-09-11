@@ -1,3 +1,4 @@
+import NearbySpots from "@/components/nearby/NearbySpots";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -47,5 +48,6 @@ export default async function RecapPage({ searchParams }: {
       <Link href={action.href} className="flex min-h-14 items-center justify-center rounded-3xl bg-[#174a36] px-6 py-4 text-center text-sm font-bold leading-7 text-white focus-visible:outline-2 focus-visible:outline-offset-4">{action.label}</Link>
       {action.needsDiagnosis && <p className="mt-3 text-sm leading-7 text-[#53665a]">次のテーマをヒントに、もう一度LENS診断から探してみましょう。</p>}
     </nav>
+    <NearbySpots lensId={lens.id} />
   </>;
 }
