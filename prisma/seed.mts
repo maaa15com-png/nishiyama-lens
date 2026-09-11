@@ -1,4 +1,5 @@
 import "temporal-polyfill/full/global";
+import { Temporal } from "temporal-polyfill";
 import "dotenv/config";
 
 import { randomUUID } from "node:crypto";
@@ -120,6 +121,92 @@ const spotSeeds = [
     isPublished: true,
   },
 ] as const;
+
+// 鯖江市オープンデータ「レッサーパンダ飼育個体情報」（2025-07-09更新、CC BY 2.1 JP）。
+// 提供Excel Sheet1の黄色（凡例: 現在西山動物園で飼育中）から、2026-09-10に公式情報で照合。
+// 原文の性格・特徴をdescriptionへ結合。ふりがなメタデータは本文に含めない。
+// https://www.city.sabae.fukui.jp/nishiyama_zoo/panda/redpanda.html
+// ミンファは公式の2026-05-21死亡発表により除外（一覧ページに残っていても採用しない）。
+// https://www.city.sabae.fukui.jp/nishiyama_zoo/news/index.html
+// ニーコはExcelの移動欄が空でも2025-06-20浜松移動の公式告知があるため除外。
+// https://www.city.sabae.fukui.jp/nishiyama_zoo/news/2025_news.html
+// ティアラのExcel移動欄2016-03-16は公式個体紹介では西山への来園日。黄色と公式を優先。
+// https://www.city.sabae.fukui.jp/nishiyama_zoo/panda/redpanda_tiara.html
+// CSVは死亡・移動前の情報を含むため採用しない。Excel外のアケビ・2026年出生仔は対象外。
+// IDはこのSeedが所有する固定UUID。再生成しない（name等には一意制約がない）。
+const redPandaSourceUrl =
+  "https://ckan.odp.jig.jp/dataset/https-ckan-odp-jig-jp-dataset-18207_redpandashiikukotai/resource/ccc95c6d-e3d0-4dd6-99fb-163704f5ab33";
+const redPandaSeeds = [
+  {
+    "id": "089d2c47-220f-486d-bdcc-65bc3fa85137",
+    "name": "ライト",
+    "sex": "オス",
+    "birthDate": "2013-07-18",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：慎重\n特徴：人参が好き　体色は黒い部分が多い　かのこと相性が良い",
+    "fatherName": "ヤンヤン",
+    "motherName": "キラリ"
+  },
+  {
+    "id": "a641f48c-b17f-4874-9e15-52ca2a3b70f7",
+    "name": "たいよう",
+    "sex": "オス",
+    "birthDate": "2013-06-15",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：穏やか　くいしんぼう\n特徴：人参が好き　食べるのが早い　運動神経は鈍い　長い手足　2024年の西山動物園推しパン総選挙では5位に選ばれた。",
+    "fatherName": null,
+    "motherName": null
+  },
+  {
+    "id": "633829b5-de11-41b4-a16a-6dde2dbc6681",
+    "name": "モッチー",
+    "sex": "オス",
+    "birthDate": "2015-06-24",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：おっとり　好戦的　気が強い\n特徴：ベビーフェイス　幼児体型　人参が嫌い　足裏マーキング　2024年の西山動物園推しパン総選挙では首位に選ばれた。",
+    "fatherName": "ヤンヤン",
+    "motherName": "キラリ"
+  },
+  {
+    "id": "9423fec5-ce54-4948-a5de-b27ceb2776b7",
+    "name": "ティアラ",
+    "sex": "メス",
+    "birthDate": "2015-07-06",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：活発、好奇心旺盛　気が強い\n特徴：運動神経が良い　笹の枝を運んで食べる　ムータンと相性が良い 2024年の西山動物園推しパン総選挙では3位に選ばれた。",
+    "fatherName": "ガイア（王子）",
+    "motherName": "ミンファ"
+  },
+  {
+    "id": "554d5e3f-16f9-4994-af5c-39813e5b24c6",
+    "name": "まつば",
+    "sex": "メス",
+    "birthDate": "2014-07-17",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：マイペース　子煩悩\n特徴：体色は黒い部分が多い　落葉プールで背泳ぎする　りんごを両手に持って食べる。",
+    "fatherName": null,
+    "motherName": null
+  },
+  {
+    "id": "d1bb66b5-40e8-42fa-b21e-4493b29bcc14",
+    "name": "かのこ",
+    "sex": "メス",
+    "birthDate": "2016-06-24",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：くいしんぼう　慎重\n特徴：顔の模様の白い部分多い　手足が長い",
+    "fatherName": null,
+    "motherName": null
+  },
+  {
+    "id": "cfc1e01c-849f-47b5-8fa2-96e80a50042d",
+    "name": "かんた",
+    "sex": "オス",
+    "birthDate": "2018-07-12",
+    "description": "鯖江市オープンデータ（2025年7月更新）より。\n性格：穏やか　くいしんぼう　愛嬌がある\n特徴：人参が好き　なんでもよく食べる 2024年の西山動物園推しパン総選挙では4位に選ばれた。",
+    "fatherName": null,
+    "motherName": null
+  }
+] as const;
+
+function parentSeedId(name: string | null, childId: string): string | null {
+  if (!name) return null;
+  const matches = redPandaSeeds.filter((panda) => panda.name === name);
+  return matches.length === 1 && matches[0].id !== childId ? matches[0].id : null;
+}
 
 const courseSpotSeeds = [
   {
@@ -258,6 +345,40 @@ async function seed() {
 
     const zoo = spots.get("nishiyama-zoo");
     if (!zoo) throw new Error("Nishiyama Zoo was not created.");
+
+    // Check for independently registered copies instead of silently duplicating or merging them.
+    const existingPandas = await tx.orm.public.RedPanda.where({ spotId: zoo.id }).all();
+    for (const panda of redPandaSeeds) {
+      if (existingPandas.some((existing) => existing.name === panda.name
+        && existing.birthDate?.toString() === panda.birthDate && existing.id !== panda.id)) {
+        throw new Error(`Red panda already exists with a different ID: ${panda.name}`);
+      }
+      const data = {
+        spotId: zoo.id,
+        name: varchar100(panda.name),
+        nameEn: null,
+        sex: panda.sex as Varchar<20>,
+        birthDate: Temporal.PlainDate.from(panda.birthDate),
+        description: panda.description,
+        descriptionEn: null,
+        imageUrl: null,
+        sourceUrl: redPandaSourceUrl,
+        isPublished: true,
+      };
+      await tx.orm.public.RedPanda.upsert({
+        create: { id: panda.id, ...data, fatherId: null, motherId: null },
+        update: data,
+        conflictOn: { id: panda.id },
+      });
+    }
+    // Resolve parents only within the confirmed target set, after all target IDs exist.
+    // For this import all parents are unknown or outside the target set, so both IDs remain null.
+    for (const panda of redPandaSeeds) {
+      await tx.orm.public.RedPanda.where({ id: panda.id }).update({
+        fatherId: parentSeedId(panda.fatherName, panda.id),
+        motherId: parentSeedId(panda.motherName, panda.id),
+      });
+    }
 
     const todaysFindMatches = await tx.orm.public.TodaysFind
       .where({
@@ -415,6 +536,18 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
   });
 
   const checks = {
+    redPandaSeedData: redPandaSeeds.every((seedPanda) => {
+      const matches = redPandas.filter((panda) => panda.id === seedPanda.id);
+      const panda = matches[0];
+      return matches.length === 1 && panda.spotId === ids.zooId
+        && panda.name === seedPanda.name && panda.sex === seedPanda.sex
+        && panda.birthDate?.toString() === seedPanda.birthDate
+        && panda.description === seedPanda.description && panda.isPublished
+        && panda.sourceUrl === redPandaSourceUrl
+        && panda.nameEn === null && panda.descriptionEn === null && panda.imageUrl === null
+        && panda.fatherId === parentSeedId(seedPanda.fatherName, seedPanda.id)
+        && panda.motherId === parentSeedId(seedPanda.motherName, seedPanda.id);
+    }),
     oneLens: lenses.length === 1 && lenses[0]?.id === ids.lensId,
     oneCourse: courses.length === 1 && courses[0]?.id === ids.courseId,
     fourSpots: seededSpots.length === 4,
