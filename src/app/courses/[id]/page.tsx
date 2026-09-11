@@ -58,7 +58,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                   {spot && <>
                     <p className="mt-5 whitespace-pre-line break-words text-sm leading-8 text-[#53665a] sm:text-base">{spot.description}</p>
                     <SpotAmenities spot={spot} />
-                    <Link href={`/spots/${encodeURIComponent(spot.slug)}`} aria-label={`${spot.name}を詳しく見る`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4">詳しく見る</Link>
+                    <Link href={`/spots/${encodeURIComponent(spot.slug)}?courseId=${course.id}`} aria-label={`${spot.name}を詳しく見る`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4">詳しく見る</Link>
                   </>}
                 </article>
                 {index < course.courseSpots.length - 1 && <div aria-hidden="true" className="py-3 pl-10 text-xl text-[#7b857e] sm:pl-12">↓</div>}
@@ -70,6 +70,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
       <nav aria-label="次のアクション" className="mt-10 flex flex-col gap-3 sm:mt-12 sm:flex-row">
         <Link href={`/map?courseId=${course.id}`} className="inline-flex min-h-14 items-center justify-center rounded-full bg-[#174a36] px-7 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]">園内MAPでコースを見る</Link>
+        <Link href={`/recap?courseId=${course.id}`} className="inline-flex min-h-14 items-center rounded-full border border-[#b9c3b8] px-7 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">選んだ楽しみ方を振り返る</Link>
         <Link href="/lens" className="inline-flex min-h-14 items-center justify-center rounded-full border border-[#b9c3b8] bg-[#fffdf8] px-7 py-3 text-sm font-semibold transition-colors hover:bg-[#f2f3ed] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]">もう一度診断する</Link>
       </nav>
     </>

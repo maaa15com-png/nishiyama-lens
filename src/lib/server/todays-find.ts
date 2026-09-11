@@ -3,8 +3,8 @@ import { db } from "./db";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// The Spot route has no selected Lens context yet. Omitted lensId means all public
-// Lens themes for this Spot; a supplied lensId also allows Lens-independent themes.
+// Without Course context, omitted lensId means all public
+// Lens themes for this Spot; Course context supplies its Lens ID and also allows Lens-independent themes.
 // Season-bound themes stay hidden until seasonal matching is implemented.
 export async function getTodaysFinds(spotId: string, lensId?: string) {
   if (!uuidPattern.test(spotId) || (lensId !== undefined && !uuidPattern.test(lensId))) return [];
