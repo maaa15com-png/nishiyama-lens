@@ -1,3 +1,4 @@
+import FindCamera from "@/components/find/FindCamera";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -48,6 +49,7 @@ export default async function SpotPage({ params }: { params: Promise<{ slug: str
       <ul className="mt-5 space-y-5">{todaysFinds.map((find) => <li key={find.id} className="rounded-2xl bg-[#fffdf8] p-5 sm:p-6">
         <h3 className="break-words text-xl font-semibold leading-relaxed">{find.title}</h3>
         <p className="mt-3 whitespace-pre-line break-words text-sm leading-8 text-[#53665a]">{find.description}</p>
+        <FindCamera title={find.title} />
       </li>)}</ul>
     </section>}
     {amenities.length > 0 && <section aria-labelledby="amenities-title" className="mt-8 rounded-3xl border border-[#e0e3d9] bg-[#fffdf8] p-6 sm:p-8">
