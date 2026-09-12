@@ -44,6 +44,7 @@ export default async function SpotPage({ params, searchParams }: { params: Promi
       <p className="text-xs font-bold tracking-[0.18em] text-[#62603b]">TODAY&apos;S FIND</p>
       <h2 id="todays-find-title" className="mt-2 text-2xl font-medium">今日の発見</h2>
       <ul className="mt-5 space-y-5">{todaysFinds.map((find) => <li key={find.id} className="rounded-2xl bg-[#fffdf8] p-5 sm:p-6">
+        {find.season && <div className="mb-3 text-sm leading-7 text-[#53665a]"><p className="font-semibold">この季節の楽しみ：{find.season.name}</p>{find.season.description && <p className="mt-2 whitespace-pre-line break-words">{find.season.description}</p>}</div>}
         <h3 className="break-words text-xl font-semibold leading-relaxed">{find.title}</h3>
         <p className="mt-3 whitespace-pre-line break-words text-sm leading-8 text-[#53665a]">{find.description}</p>
         <FindCamera title={find.title} courseId={course?.id} />

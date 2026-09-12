@@ -39,6 +39,7 @@ export default async function RecapPage({ searchParams }: {
       <h2 id="recap-find" className="text-lg font-semibold">TODAY’S FIND</h2>
       <p className="mt-3 text-sm leading-7">このコースで楽しめる発見テーマ。見つけたことも、次に探したいことも、あなたのペースで。</p>
       <ul className="mt-5 space-y-5">{finds.map((find) => <li key={find.id}>
+        {find.season && <div className="mb-3 text-sm leading-7 text-[#53665a]"><p className="font-semibold">この季節の楽しみ：{find.season.name}</p>{find.season.description && <p className="mt-2 whitespace-pre-line break-words">{find.season.description}</p>}</div>}
         <h3 className="break-words font-semibold leading-7">{find.title}</h3>
         <p className="mt-2 whitespace-pre-line break-words text-sm leading-7">{find.description}</p>
       </li>)}</ul>
