@@ -418,6 +418,36 @@ async function seed() {
       });
     }
 
+    // Issue #37: user-approved calendar display windows, not peak predictions.
+    // Source: 鯖江市公式・西山公園特集 / さばえつつじまつり / もみじライトアップ案内。
+    // May and November are display categories; no exact flowering dates are inferred.
+    const seasonalSpot = spots.get("seasonal-highlight");
+    if (!seasonalSpot) throw new Error("Seasonal highlight Spot is required.");
+    const seasonSeeds = [
+      { slug: "spring-azaleas", name: "春のツツジ", seasonGroup: "SPRING" as const, month: 5,
+        description: "春の西山公園では、約5万株のつつじが公園を彩ります。毎年5月上旬にはつつじまつりも開かれます。",
+        title: "お気に入りのツツジを見つけよう", findDescription: "春の西山公園で、心に留まったつつじを探してみよう。", effectType: "FLOWER" as const },
+      { slug: "autumn-leaves", name: "秋の紅葉", seasonGroup: "AUTUMN" as const, month: 11,
+        description: "西山公園には1600本を越えるもみじがあり、秋深まる頃には色とりどりの紅葉を楽しめます。",
+        title: "お気に入りの紅葉を見つけよう", findDescription: "秋の西山公園で、お気に入りの葉の色や形を探してみよう。", effectType: "AUTUMN" as const },
+    ];
+    for (const item of seasonSeeds) {
+      const data = { name: varchar100(item.name), nameEn: null, seasonGroup: item.seasonGroup,
+        startMonth: item.month, endMonth: item.month, startDay: null, endDay: null,
+        description: item.description, descriptionEn: null, imageUrl: null, isPublished: true };
+      const season = await tx.orm.public.Season.upsert({
+        create: { id: randomUUID(), slug: varchar100(item.slug), ...data },
+        update: data, conflictOn: { slug: varchar100(item.slug) },
+      });
+      const matches = await tx.orm.public.TodaysFind.where({ seasonId: season.id, spotId: seasonalSpot.id, lensId: null, title: varchar150(item.title) }).all();
+      if (matches.length > 1) throw new Error("Duplicate seasonal Find seed records already exist.");
+      const findData = { titleEn: null, description: item.findDescription, descriptionEn: null,
+        seasonId: season.id, spotId: seasonalSpot.id, lensId: null, effectType: item.effectType,
+        startAt: null, endAt: null, isPublished: true };
+      if (matches[0]) await tx.orm.public.TodaysFind.where({ id: matches[0].id }).update(findData);
+      else await tx.orm.public.TodaysFind.create({ id: randomUUID(), title: varchar150(item.title), ...findData });
+    }
+
     const nearbySpot = await tx.orm.public.NearbySpot.upsert({
       create: {
         id: randomUUID(),
@@ -523,6 +553,10 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
     .where({ lensId: ids.lensId, nearbySpotId: ids.nearbySpotId })
     .all();
   const redPandas = await db.orm.public.RedPanda.all();
+  const allFinds = await db.orm.public.TodaysFind.all();
+  const seasons = (await db.orm.public.Season.all()).filter((season) =>
+    ["spring-azaleas", "autumn-leaves"].includes(season.slug));
+  const seasonalFinds = allFinds.filter((find) => seasons.some((season) => season.id === find.seasonId));
 
   const orderedCourseSpots = [...courseSpots].sort(
     (left, right) => left.sortOrder - right.sortOrder,
@@ -536,6 +570,17 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
   });
 
   const checks = {
+    seasonalData: seasons.length === 2 && seasonalFinds.length === 2 && seasons.every((season) => {
+      const spring = season.slug === "spring-azaleas";
+      const month = spring ? 5 : 11;
+      const find = seasonalFinds.find((candidate) => candidate.seasonId === season.id);
+      return season.startMonth === month && season.endMonth === month
+        && season.startDay === null && season.endDay === null && season.isPublished
+        && season.seasonGroup === (spring ? "SPRING" : "AUTUMN")
+        && find?.title === (spring ? "お気に入りのツツジを見つけよう" : "お気に入りの紅葉を見つけよう")
+        && find.spotId === seededSpots.find((spot) => spot.slug === "seasonal-highlight")?.id
+        && find.lensId === null && find.isPublished && find.startAt === null && find.endAt === null;
+    }),
     redPandaSeedData: redPandaSeeds.every((seedPanda) => {
       const matches = redPandas.filter((panda) => panda.id === seedPanda.id);
       const panda = matches[0];
@@ -574,7 +619,9 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
       course: courses.length,
       spot: seededSpots.length,
       courseSpot: courseSpots.length,
-      todaysFind: todaysFinds.length,
+      todaysFind: allFinds.length,
+      season: seasons.length,
+      seasonalFind: seasonalFinds.length,
       nearbySpot: nearbySpots.length,
       lensNearbySpot: lensNearbySpots.length,
       redPanda: redPandas.length,
