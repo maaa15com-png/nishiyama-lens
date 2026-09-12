@@ -239,36 +239,78 @@ const courseSpotSeeds = [
   },
 ] as const;
 
+// Additional MVP themes reuse only the four verified Spot seeds above.
+// Duration is an editorial course allowance, not measured walking time.
+// Family themes use FAMILY; the legacy PANDA condition is moved in the transaction below.
+const additionalCourseSeeds = [
+  { companion: "FAMILY", interest: "PLAY", name: "FAMILY × PLAY",
+    title: "家族で遊びと動物を楽しむ旅", titleEn: "Playtime and Animals for Families",
+    description: "冒険の森で体を動かし、西山動物園で動物に会って、道の駅でひと休みするLENS。",
+    descriptionEn: "Enjoy the playground, meet animals at Nishiyama Zoo, and take a break at the roadside station.",
+    courseName: "家族で遊ぶ西山公園2〜3時間コース", courseNameEn: "2–3 Hour Family Play Course",
+    courseDescription: "冒険の森で遊ぶ時間を中心に、西山動物園と道の駅 西山公園を楽しむコース。家族のペースで休憩を挟みながら過ごせます。",
+    courseDescriptionEn: "Make time for play at Adventure Forest, visit Nishiyama Zoo, and take a break at Michi-no-Eki Nishiyama Park at your family's pace.",
+    durationType: "HOURS_2_3", durationMinutes: 150,
+    spots: ["adventure-forest", "nishiyama-zoo", "michi-no-eki-nishiyama"] },
+  { companion: "COUPLE", interest: "PHOTO", name: "COUPLE × PHOTO",
+    title: "ふたりで季節の景色を写す旅", titleEn: "Seasonal Photos for Two",
+    description: "季節の景色からふたりのお気に入りを探し、写真を楽しむLENS。",
+    descriptionEn: "Explore seasonal scenery together and find your favorite views to photograph.",
+    courseName: "ふたりで写真を楽しむ1〜2時間コース", courseNameEn: "1–2 Hour Photo Walk for Two",
+    courseDescription: "季節の見どころで色や形に目を向け、写真を楽しんだら道の駅 西山公園でひと休み。ふたりで景色を味わうコースです。",
+    courseDescriptionEn: "Look for colors and shapes at the seasonal highlight, enjoy taking photos, then relax at Michi-no-Eki Nishiyama Park.",
+    durationType: "HOURS_1_2", durationMinutes: 90,
+    spots: ["seasonal-highlight", "michi-no-eki-nishiyama"] },
+  { companion: "SOLO", interest: "RELAX", name: "SOLO × RELAX",
+    title: "ひとりで季節を感じるひと休み", titleEn: "A Quiet Moment with the Seasons",
+    description: "季節の景色を自分のペースで眺め、気分を切り替えるLENS。",
+    descriptionEn: "Take in seasonal scenery at your own pace and enjoy a change of scene.",
+    courseName: "ひとりでひと息つく30〜60分コース", courseNameEn: "30–60 Minute Solo Break",
+    courseDescription: "季節の見どころを眺めて、道の駅 西山公園でひと休み。たくさん巡るよりも、自分のペースで過ごしたい日に選ぶコースです。",
+    courseDescriptionEn: "Take in the seasonal highlight and pause at Michi-no-Eki Nishiyama Park. Enjoy a little time to yourself without trying to see everything.",
+    durationType: "MINUTES_30_60", durationMinutes: 60,
+    spots: ["seasonal-highlight", "michi-no-eki-nishiyama"] },
+] as const;
+
 async function seed() {
   return db.transaction(async (tx) => {
+    // Move the existing row instead of creating a replacement: preserve every foreign key.
+    const legacyPanda = await tx.orm.public.Lens.where({ companion: "SMALL_CHILDREN", interest: "PANDA" }).first();
+    const familyPanda = await tx.orm.public.Lens.where({ companion: "FAMILY", interest: "PANDA" }).first();
+    if (legacyPanda && familyPanda) {
+      throw new Error("Both legacy and FAMILY PANDA lenses exist; refusing to merge their relations.");
+    }
+    if (legacyPanda) {
+      await tx.orm.public.Lens.where({ id: legacyPanda.id }).update({ companion: "FAMILY" });
+    }
     const lens = await tx.orm.public.Lens.upsert({
       create: {
         id: randomUUID(),
         name: varchar100("FAMILY × PANDA"),
-        companion: "SMALL_CHILDREN",
+        companion: "FAMILY",
         interest: "PANDA",
-        title: varchar150("親子でレッサーパンダを楽しむ旅"),
+        title: varchar150("家族でレッサーパンダを楽しむ旅"),
         titleEn: varchar150("A Red Panda Adventure for Families"),
         description:
-          "小さな子どもと一緒に、レッサーパンダや遊び場を中心に西山公園を楽しむLENS。",
+          "子ども連れの家族で、レッサーパンダを中心に西山公園を楽しむLENS。",
         descriptionEn:
-          "A family-friendly way to explore Nishiyama Park with red pandas and play areas.",
+          "A way for families with children to enjoy Nishiyama Park, with red pandas at the heart of the visit.",
         imageUrl: null,
         isPublished: true,
       },
       update: {
         name: varchar100("FAMILY × PANDA"),
-        title: varchar150("親子でレッサーパンダを楽しむ旅"),
+        title: varchar150("家族でレッサーパンダを楽しむ旅"),
         titleEn: varchar150("A Red Panda Adventure for Families"),
         description:
-          "小さな子どもと一緒に、レッサーパンダや遊び場を中心に西山公園を楽しむLENS。",
+          "子ども連れの家族で、レッサーパンダを中心に西山公園を楽しむLENS。",
         descriptionEn:
-          "A family-friendly way to explore Nishiyama Park with red pandas and play areas.",
+          "A way for families with children to enjoy Nishiyama Park, with red pandas at the heart of the visit.",
         imageUrl: null,
         isPublished: true,
       },
       conflictOn: {
-        companion: "SMALL_CHILDREN",
+        companion: "FAMILY",
         interest: "PANDA",
       },
     });
@@ -341,6 +383,33 @@ async function seed() {
           sortOrder: courseSpotSeed.sortOrder,
         },
       });
+    }
+
+    const additionalCourses = [];
+    for (const item of additionalCourseSeeds) {
+      const lensData = { name: varchar100(item.name), title: varchar150(item.title), titleEn: varchar150(item.titleEn),
+        description: item.description, descriptionEn: item.descriptionEn, imageUrl: null, isPublished: true };
+      const addedLens = await tx.orm.public.Lens.upsert({
+        create: { id: randomUUID(), companion: item.companion, interest: item.interest, ...lensData },
+        update: lensData, conflictOn: { companion: item.companion, interest: item.interest },
+      });
+      const courseData = { name: varchar150(item.courseName), nameEn: varchar150(item.courseNameEn),
+        description: item.courseDescription, descriptionEn: item.courseDescriptionEn,
+        durationMinutes: item.durationMinutes, imageUrl: null, isPublished: true };
+      const addedCourse = await tx.orm.public.Course.upsert({
+        create: { id: randomUUID(), lensId: addedLens.id, durationType: item.durationType, ...courseData },
+        update: courseData, conflictOn: { lensId: addedLens.id, durationType: item.durationType },
+      });
+      for (const [index, slug] of item.spots.entries()) {
+        const spot = spots.get(slug);
+        if (!spot) throw new Error('Required course Spot is missing: ' + slug);
+        const linkData = { spotId: spot.id, stayMinutes: null, walkMinutesFromPrevious: null, note: null, noteEn: null };
+        await tx.orm.public.CourseSpot.upsert({
+          create: { id: randomUUID(), courseId: addedCourse.id, sortOrder: index + 1, ...linkData },
+          update: linkData, conflictOn: { courseId: addedCourse.id, sortOrder: index + 1 },
+        });
+      }
+      additionalCourses.push({ lensId: addedLens.id, courseId: addedCourse.id, name: item.name });
     }
 
     const zoo = spots.get("nishiyama-zoo");
@@ -517,6 +586,7 @@ async function seed() {
     });
 
     return {
+      additionalCourses,
       lensId: lens.id,
       courseId: course.id,
       zooId: zoo.id,
@@ -527,7 +597,7 @@ async function seed() {
 
 async function verify(ids: Awaited<ReturnType<typeof seed>>) {
   const lenses = await db.orm.public.Lens
-    .where({ companion: "SMALL_CHILDREN", interest: "PANDA" })
+    .where({ companion: "FAMILY", interest: "PANDA" })
     .all();
   const courses = await db.orm.public.Course
     .where({ lensId: ids.lensId, durationType: "HOURS_2_3" })
@@ -569,7 +639,25 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
     return spot.id;
   });
 
+  const additionalChecks = [];
+  for (const [index, item] of additionalCourseSeeds.entries()) {
+    const added = ids.additionalCourses[index];
+    const matchingLenses = await db.orm.public.Lens.where({ companion: item.companion, interest: item.interest }).all();
+    const matchingCourses = await db.orm.public.Course.where({ lensId: added.lensId }).all();
+    const links = await db.orm.public.CourseSpot.where({ courseId: added.courseId }).orderBy((link) => link.sortOrder.asc()).all();
+    additionalChecks.push(matchingLenses.length === 1 && matchingLenses[0].id === added.lensId
+      && matchingLenses[0].isPublished && matchingLenses[0].titleEn === item.titleEn
+      && matchingCourses.length === 1 && matchingCourses[0].id === added.courseId
+      && matchingCourses[0].durationType === item.durationType && matchingCourses[0].durationMinutes === item.durationMinutes
+      && matchingCourses[0].isPublished && matchingCourses[0].nameEn === item.courseNameEn
+      && links.length === item.spots.length && links.every((link, i) => link.sortOrder === i + 1
+        && link.spotId === seededSpots.find((spot) => spot.slug === item.spots[i])?.id));
+  }
+
+  const legacyPandaLenses = await db.orm.public.Lens.where({ companion: "SMALL_CHILDREN", interest: "PANDA" }).all();
   const checks = {
+    noLegacyPanda: legacyPandaLenses.length === 0,
+    additionalCourses: additionalChecks.every(Boolean),
     seasonalData: seasons.length === 2 && seasonalFinds.length === 2 && seasons.every((season) => {
       const spring = season.slug === "spring-azaleas";
       const month = spring ? 5 : 11;
@@ -626,6 +714,7 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
       lensNearbySpot: lensNearbySpots.length,
       redPanda: redPandas.length,
     },
+    additionalCourses: ids.additionalCourses,
     courseSpotOrder: orderedCourseSpots.map((courseSpot) => {
       const spot = seededSpots.find(
         (candidate) => candidate.id === courseSpot.spotId,
