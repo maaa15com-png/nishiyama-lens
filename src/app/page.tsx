@@ -333,6 +333,12 @@ function Footer() {
         <p className="font-semibold tracking-[0.18em] text-white/85">
           NISHIYAMA LENS
         </p>
+        <nav aria-label="公園の基本情報" className="flex flex-wrap gap-3">
+          <Link href="/park?lang=ja" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">公園について</Link>
+          <Link href="/news?lang=ja" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">お知らせ</Link>
+          <Link href="/events?lang=ja" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">イベント</Link>
+          <Link href="/park?lang=en" lang="en" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">English guide</Link>
+        </nav>
         <p>見方を変えると、公園は旅になる。</p>
       </div>
     </footer>
