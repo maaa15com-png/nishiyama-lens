@@ -4,12 +4,13 @@ import type {
   InterestType,
 } from "./types";
 
-export const companionLabels: Record<CompanionType, string> = {
+export const companionLabels: Record<CompanionType | "SMALL_CHILDREN", string> = {
+  // Compatibility label for legacy DB rows; not a diagnosis option.
+  SMALL_CHILDREN: "小さな子どもと",
   SOLO: "ひとりで",
   FRIENDS: "友達と",
   COUPLE: "パートナーと",
-  SMALL_CHILDREN: "小さな子どもと",
-  FAMILY: "家族と",
+  FAMILY: "子ども連れの家族と",
 };
 
 export const interestLabels: Record<InterestType, string> = {

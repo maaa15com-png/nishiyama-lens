@@ -222,7 +222,7 @@ function LensIntroduction() {
           西山公園の楽しみ方。
         </SectionHeading>
         <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-[#68736c] sm:text-base sm:leading-8">
-          ３つの質問から、今のあなたにちょうどいい過ごし方をご提案します。
+          ２つの質問から、今のあなたにちょうどいい過ごし方をご提案します。
         </p>
 
         <ol className="relative mt-12 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-5">
@@ -316,7 +316,7 @@ function FinalCta() {
           どんな公園を旅する？
         </h2>
         <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-[#617066]">
-          3つの質問に答えて、あなたらしい西山公園の一日を見つけてみましょう。
+          2つの質問に答えて、あなたらしい西山公園の一日を見つけてみましょう。
         </p>
         <div className="mt-9">
           <PrimaryCta />
