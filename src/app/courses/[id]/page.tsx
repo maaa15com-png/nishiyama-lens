@@ -7,7 +7,7 @@ import { getCourseDetail } from "@/lib/server/course-detail";
 
 export const metadata: Metadata = {
   title: "おすすめコース | NISHIYAMA LENS",
-  description: "西山公園のおすすめコースと、順番にめぐるスポットをご紹介します。",
+  description: "西山公園のおすすめコースと、コース内で楽しめるスポットをご紹介します。",
 };
 
 export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
@@ -27,29 +27,25 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
             <dt className="text-xs text-white/75">過ごし方の目安</dt>
             <dd className="mt-1 text-lg font-semibold">{durationLabels[course.durationType]}</dd>
           </div>
-          <div>
-            <dt className="text-xs text-white/75">所要時間</dt>
-            <dd className="mt-1 text-lg font-semibold">約{course.durationMinutes}分</dd>
-          </div>
         </dl>
         {course.description && <p className="mt-7 whitespace-pre-line break-words text-sm leading-8 text-white/85 sm:text-base">{course.description}</p>}
       </section>
 
-      <section aria-labelledby="course-flow-title" className="mt-12 sm:mt-16">
+      <section aria-labelledby="course-spots-title" className="mt-12 sm:mt-16">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 id="course-flow-title" className="text-2xl font-medium">コースの流れ</h2>
-          <p className="text-sm text-[#68736c]">{course.courseSpots.length}つのスポットをめぐる</p>
+          <h2 id="course-spots-title" className="text-2xl font-medium">このコースで楽しめるスポット</h2>
+          <p className="text-sm text-[#68736c]">{course.courseSpots.length}つのスポット</p>
         </div>
-        <p className="mt-3 text-sm leading-7 text-[#68736c]">上から順に、気になる景色や遊びを楽しみましょう。</p>
+        <p className="mt-3 text-sm leading-7 text-[#68736c]">番号はMAPのピンと対応しています。巡る順番ではありません。現在地から近いスポットや、気になる場所を見つけて楽しんでください。</p>
         {course.courseSpots.length === 0 ? (
           <p className="mt-6 rounded-3xl bg-[#fffdf8] p-6 text-sm leading-7">このコースのスポット情報は準備中です。</p>
         ) : (
-          <ol className="mt-7">
-            {course.courseSpots.map(({ spotId, sortOrder, spot }, index) => (
-              <li key={spotId} value={sortOrder}>
+          <ul role="list" className="mt-7 space-y-6">
+            {course.courseSpots.map(({ spotId, sortOrder, spot }) => (
+              <li key={spotId}>
                 <article className="rounded-[1.5rem] border border-[#e0e3d9] bg-[#fffdf8] p-6 shadow-[0_12px_35px_rgba(40,55,42,0.05)] sm:p-8">
                   <div className="flex items-start gap-4">
-                    <span aria-label={`順番 ${sortOrder}`} className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#174a36] text-lg font-bold text-white">{sortOrder}</span>
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#174a36] text-lg font-bold text-white"><span className="sr-only">MAPのスポット番号 </span>{sortOrder}</span>
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-[#68736c]">{spot ? spotCategoryLabels[spot.category] : "スポット"}</p>
                       <h3 className="mt-1 break-words text-xl font-semibold leading-relaxed sm:text-2xl">{spot?.name ?? "スポット情報は準備中です"}</h3>
@@ -61,10 +57,9 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                     <Link href={`/spots/${encodeURIComponent(spot.slug)}?courseId=${course.id}`} aria-label={`${spot.name}を詳しく見る`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4">詳しく見る</Link>
                   </>}
                 </article>
-                {index < course.courseSpots.length - 1 && <div aria-hidden="true" className="py-3 pl-10 text-xl text-[#7b857e] sm:pl-12">↓</div>}
               </li>
             ))}
-          </ol>
+          </ul>
         )}
       </section>
 

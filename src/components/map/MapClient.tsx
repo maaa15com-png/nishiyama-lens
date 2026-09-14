@@ -181,7 +181,7 @@ export default function MapClient({ spots, courseId }: { spots: MapSpot[]; cours
     <>
       <section aria-label="現在地の表示" className="mb-5 rounded-2xl border border-[#d9ddd3] bg-[#fffdf8] p-5">
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm leading-7 text-[#53665a]">現在地から、近くのコース内スポットを探しましょう。</p>
+          <p className="text-sm leading-7 text-[#53665a]">現在地から近いコース内スポットを見つけて、楽しんでください。</p>
           <button
             type="button"
             onClick={requestLocation}

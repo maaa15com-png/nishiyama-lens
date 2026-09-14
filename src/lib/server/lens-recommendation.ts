@@ -1,45 +1,29 @@
+import "server-only";
 import { db } from "./db";
-import type {
-  LensRecommendationInput,
-  LensRecommendationResponse,
-} from "@/lib/lens/types";
+import { durationTypes, isLensRecommendationInput, type LensRecommendationInput, type LensRecommendationResponse } from "@/lib/lens/types";
 
-export async function getLensRecommendation(
-  input: LensRecommendationInput,
-): Promise<LensRecommendationResponse> {
+// Lens is determined only by companion and interest. Duration belongs to course selection.
+export async function getLensRecommendation(input: LensRecommendationInput): Promise<LensRecommendationResponse> {
+  if (!isLensRecommendationInput(input)) return { recommendation: null, reason: "INVALID_INPUT" };
   const lens = await db.orm.public.Lens
-    .where({ companion: input.companion, interest: input.interest })
-    .select("id", "name", "description", "companion", "interest")
+    .where({ companion: input.companion, interest: input.interest, isPublished: true })
+    .select("id", "name", "description")
     .first();
+  if (!lens) return { recommendation: null, reason: "LENS_NOT_FOUND" };
+  const courses = await getLensCourses(lens.id);
+  return { recommendation: { lens: {
+    id: lens.id, name: String(lens.name), description: lens.description,
+    companion: input.companion, interest: input.interest,
+  }, courses } };
+}
 
-  if (!lens) {
-    return { recommendation: null, reason: "LENS_NOT_FOUND" };
-  }
-
-  const course = await db.orm.public.Course
-    .where({ lensId: lens.id, durationType: input.duration })
-    .select("id", "name", "durationType", "durationMinutes")
-    .first();
-
-  if (!course) {
-    return { recommendation: null, reason: "COURSE_NOT_FOUND" };
-  }
-
-  return {
-    recommendation: {
-      lens: {
-        id: lens.id,
-        name: String(lens.name),
-        description: lens.description,
-        companion: lens.companion,
-        interest: lens.interest,
-      },
-      course: {
-        id: course.id,
-        name: String(course.name),
-        durationType: course.durationType,
-        durationMinutes: course.durationMinutes,
-      },
-    },
-  };
+// Called only after resolving a published Lens above. Excludes legacy durations.
+async function getLensCourses(lensId: string) {
+  const rows = await db.orm.public.Course.where({ lensId, isPublished: true })
+    .select("id", "name", "description", "durationType", "durationMinutes")
+    .orderBy((course) => course.id.asc()).all();
+  return durationTypes.flatMap((durationType) => rows
+    .filter((course) => course.durationType === durationType)
+    .map((course) => ({ id: course.id, name: String(course.name), description: course.description,
+      durationType, durationMinutes: course.durationMinutes })));
 }

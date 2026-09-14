@@ -57,7 +57,6 @@ export function LensDiagnosisClient() {
     const searchParams = new URLSearchParams({
       companion: answers.companion,
       interest: answers.interest,
-      duration: answers.duration,
     });
     router.push(`/lens/result?${searchParams.toString()}`);
   }
@@ -144,7 +143,7 @@ export function LensDiagnosisClient() {
 function isCompleteAnswers(
   answers: LensAnswers,
 ): answers is LensRecommendationInput {
-  return Boolean(answers.companion && answers.interest && answers.duration);
+  return Boolean(answers.companion && answers.interest);
 }
 
 function LensProgress({ step, totalSteps }: { step: number; totalSteps: number }) {

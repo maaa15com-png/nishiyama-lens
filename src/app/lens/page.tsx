@@ -4,7 +4,7 @@ import { LensDiagnosisClient } from "@/components/lens/LensDiagnosisClient";
 
 export const metadata: Metadata = {
   title: "LENS診断 | NISHIYAMA LENS",
-  description: "3つの質問から、あなたに合った西山公園の楽しみ方を見つけます。",
+  description: "2つの質問から、あなたに合った西山公園の楽しみ方を見つけます。",
 };
 
 export default function LensPage() {
@@ -48,7 +48,7 @@ export default function LensPage() {
               id="lens-page-title"
               className="mt-4 text-3xl font-medium leading-tight tracking-[-0.04em] text-[#173e30] sm:text-4xl lg:text-5xl"
             >
-              3つの質問から、
+              2つの質問から、
               <br />
               今日の楽しみ方を見つけよう。
             </h1>

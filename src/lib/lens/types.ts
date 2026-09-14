@@ -2,7 +2,6 @@ export const companionTypes = [
   "SOLO",
   "FRIENDS",
   "COUPLE",
-  "SMALL_CHILDREN",
   "FAMILY",
 ] as const;
 
@@ -18,25 +17,23 @@ export const durationTypes = [
   "MINUTES_30_60",
   "HOURS_1_2",
   "HOURS_2_3",
-  "HALF_DAY",
 ] as const;
 
 export type CompanionType = (typeof companionTypes)[number];
 export type InterestType = (typeof interestTypes)[number];
-export type DurationType = (typeof durationTypes)[number];
+// Keep the legacy DB type for existing detail/Recap labels.
+export type DurationType = (typeof durationTypes)[number] | "HALF_DAY";
 
 export type LensAnswers = {
   companion?: CompanionType;
   interest?: InterestType;
-  duration?: DurationType;
 };
 
-export type LensAnswerValue = CompanionType | InterestType | DurationType;
+export type LensAnswerValue = CompanionType | InterestType;
 
 export type LensRecommendationInput = {
   companion: CompanionType;
   interest: InterestType;
-  duration: DurationType;
 };
 
 export type LensRecommendation = {
@@ -47,12 +44,13 @@ export type LensRecommendation = {
     companion: CompanionType;
     interest: InterestType;
   };
-  course: {
+  courses: {
     id: string;
     name: string;
-    durationType: DurationType;
+    description: string | null;
+    durationType: (typeof durationTypes)[number];
     durationMinutes: number;
-  };
+  }[];
 };
 
 export type LensRecommendationResponse =
@@ -61,7 +59,6 @@ export type LensRecommendationResponse =
       recommendation: null;
       reason:
         | "LENS_NOT_FOUND"
-        | "COURSE_NOT_FOUND"
         | "INVALID_INPUT"
         | "INTERNAL_ERROR";
     };
@@ -75,8 +72,7 @@ export function isLensRecommendationInput(
 
   return (
     isOneOf(companionTypes, value.companion) &&
-    isOneOf(interestTypes, value.interest) &&
-    isOneOf(durationTypes, value.duration)
+    isOneOf(interestTypes, value.interest)
   );
 }
 

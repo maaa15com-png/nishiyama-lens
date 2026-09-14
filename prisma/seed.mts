@@ -247,7 +247,7 @@ const additionalCourseSeeds = [
     title: "家族で遊びと動物を楽しむ旅", titleEn: "Playtime and Animals for Families",
     description: "冒険の森で体を動かし、西山動物園で動物に会って、道の駅でひと休みするLENS。",
     descriptionEn: "Enjoy the playground, meet animals at Nishiyama Zoo, and take a break at the roadside station.",
-    courseName: "家族で遊ぶ西山公園2〜3時間コース", courseNameEn: "2–3 Hour Family Play Course",
+    courseName: "家族で遊ぶ西山公園コース", courseNameEn: "2–3 Hour Family Play Course",
     courseDescription: "冒険の森で遊ぶ時間を中心に、西山動物園と道の駅 西山公園を楽しむコース。家族のペースで休憩を挟みながら過ごせます。",
     courseDescriptionEn: "Make time for play at Adventure Forest, visit Nishiyama Zoo, and take a break at Michi-no-Eki Nishiyama Park at your family's pace.",
     durationType: "HOURS_2_3", durationMinutes: 150,
@@ -256,7 +256,7 @@ const additionalCourseSeeds = [
     title: "ふたりで季節の景色を写す旅", titleEn: "Seasonal Photos for Two",
     description: "季節の景色からふたりのお気に入りを探し、写真を楽しむLENS。",
     descriptionEn: "Explore seasonal scenery together and find your favorite views to photograph.",
-    courseName: "ふたりで写真を楽しむ1〜2時間コース", courseNameEn: "1–2 Hour Photo Walk for Two",
+    courseName: "ふたりで写真を楽しむコース", courseNameEn: "1–2 Hour Photo Walk for Two",
     courseDescription: "季節の見どころで色や形に目を向け、写真を楽しんだら道の駅 西山公園でひと休み。ふたりで景色を味わうコースです。",
     courseDescriptionEn: "Look for colors and shapes at the seasonal highlight, enjoy taking photos, then relax at Michi-no-Eki Nishiyama Park.",
     durationType: "HOURS_1_2", durationMinutes: 90,
@@ -265,11 +265,125 @@ const additionalCourseSeeds = [
     title: "ひとりで季節を感じるひと休み", titleEn: "A Quiet Moment with the Seasons",
     description: "季節の景色を自分のペースで眺め、気分を切り替えるLENS。",
     descriptionEn: "Take in seasonal scenery at your own pace and enjoy a change of scene.",
-    courseName: "ひとりでひと息つく30〜60分コース", courseNameEn: "30–60 Minute Solo Break",
+    courseName: "ひとりでひと息つくコース", courseNameEn: "30–60 Minute Solo Break",
     courseDescription: "季節の見どころを眺めて、道の駅 西山公園でひと休み。たくさん巡るよりも、自分のペースで過ごしたい日に選ぶコースです。",
     courseDescriptionEn: "Take in the seasonal highlight and pause at Michi-no-Eki Nishiyama Park. Enjoy a little time to yourself without trying to see everything.",
     durationType: "MINUTES_30_60", durationMinutes: 60,
     spots: ["seasonal-highlight", "michi-no-eki-nishiyama"] },
+] as const;
+
+// Issue #42: extra durations use existing Spots; times are editorial allowances.
+const durationCourseSeeds = [
+  {
+    "companion": "FAMILY",
+    "interest": "PANDA",
+    "durationType": "MINUTES_30_60",
+    "durationMinutes": 60,
+    "name": "家族でパンダに会うコース",
+    "nameEn": "30–60 Minute Family Panda Visit",
+    "description": "西山動物園でレッサーパンダを中心に楽しむ、短い時間のコース。",
+    "descriptionEn": "Focus on the red pandas at Nishiyama Zoo during a short family visit.",
+    "spots": [
+      "nishiyama-zoo"
+    ]
+  },
+  {
+    "companion": "FAMILY",
+    "interest": "PANDA",
+    "durationType": "HOURS_1_2",
+    "durationMinutes": 90,
+    "name": "家族でパンダとひと休みを楽しむコース",
+    "nameEn": "1–2 Hour Family Panda and Rest Course",
+    "description": "西山動物園で動物を見た後は、道の駅 西山公園でひと休み。家族のペースで楽しみます。",
+    "descriptionEn": "Meet the animals at Nishiyama Zoo, then take a family break at Michi-no-Eki Nishiyama Park.",
+    "spots": [
+      "nishiyama-zoo",
+      "michi-no-eki-nishiyama"
+    ]
+  },
+  {
+    "companion": "FAMILY",
+    "interest": "PLAY",
+    "durationType": "MINUTES_30_60",
+    "durationMinutes": 60,
+    "name": "冒険の森で遊ぶコース",
+    "nameEn": "30–60 Minute Family Playground Visit",
+    "description": "冒険の森で体を動かして遊ぶ時間を中心に、家族で気軽に楽しむコース。",
+    "descriptionEn": "Enjoy a short family visit focused on active play at Adventure Forest.",
+    "spots": [
+      "adventure-forest"
+    ]
+  },
+  {
+    "companion": "FAMILY",
+    "interest": "PLAY",
+    "durationType": "HOURS_1_2",
+    "durationMinutes": 90,
+    "name": "遊びと休憩を楽しむコース",
+    "nameEn": "1–2 Hour Family Play and Rest Course",
+    "description": "冒険の森で遊んだ後は道の駅 西山公園へ。遊ぶ時間と休む時間を組み合わせます。",
+    "descriptionEn": "Play at Adventure Forest, then take a break at Michi-no-Eki Nishiyama Park.",
+    "spots": [
+      "adventure-forest",
+      "michi-no-eki-nishiyama"
+    ]
+  },
+  {
+    "companion": "COUPLE",
+    "interest": "PHOTO",
+    "durationType": "MINUTES_30_60",
+    "durationMinutes": 60,
+    "name": "ふたりで季節を写すコース",
+    "nameEn": "30–60 Minute Seasonal Photo Walk",
+    "description": "季節の見どころで色や形を探し、ふたりで写真を楽しむ短いコース。",
+    "descriptionEn": "Look for seasonal colors and shapes and enjoy taking photos together.",
+    "spots": [
+      "seasonal-highlight"
+    ]
+  },
+  {
+    "companion": "COUPLE",
+    "interest": "PHOTO",
+    "durationType": "HOURS_2_3",
+    "durationMinutes": 150,
+    "name": "ふたりで季節と動物を楽しむコース",
+    "nameEn": "2–3 Hour Scenery and Animals Course for Two",
+    "description": "季節の景色を写真に残し、西山動物園で動物にも会うコース。最後は道の駅 西山公園でひと休みします。",
+    "descriptionEn": "Photograph seasonal scenery, meet animals at Nishiyama Zoo, then take a break at Michi-no-Eki Nishiyama Park.",
+    "spots": [
+      "seasonal-highlight",
+      "nishiyama-zoo",
+      "michi-no-eki-nishiyama"
+    ]
+  },
+  {
+    "companion": "SOLO",
+    "interest": "RELAX",
+    "durationType": "HOURS_1_2",
+    "durationMinutes": 90,
+    "name": "季節を眺めてひと息つくコース",
+    "nameEn": "1–2 Hour Solo Seasonal Break",
+    "description": "季節の見どころを自分のペースで眺め、道の駅 西山公園でひと休み。短いコースよりも景色を味わう時間をとります。",
+    "descriptionEn": "Spend a little longer enjoying seasonal scenery at your own pace, then rest at Michi-no-Eki Nishiyama Park.",
+    "spots": [
+      "seasonal-highlight",
+      "michi-no-eki-nishiyama"
+    ]
+  },
+  {
+    "companion": "SOLO",
+    "interest": "RELAX",
+    "durationType": "HOURS_2_3",
+    "durationMinutes": 150,
+    "name": "季節と休憩をゆっくり楽しむコース",
+    "nameEn": "2–3 Hour Unhurried Solo Course",
+    "description": "訪れる場所を増やさず、季節の見どころを眺める時間と、道の駅 西山公園での休憩をゆったりとるコース。急がず過ごしたい日に。",
+    "descriptionEn": "Take your time with seasonal scenery and a leisurely break at Michi-no-Eki Nishiyama Park, without adding more stops.",
+    "spots": [
+      "seasonal-highlight",
+      "michi-no-eki-nishiyama"
+    ]
+  }
 ] as const;
 
 async function seed() {
@@ -319,7 +433,7 @@ async function seed() {
       create: {
         id: randomUUID(),
         lensId: lens.id,
-        name: varchar150("親子で楽しむ西山公園2〜3時間コース"),
+        name: varchar150("親子で楽しむ西山公園コース"),
         nameEn: varchar150("2–3 Hour Family Course"),
         durationType: "HOURS_2_3",
         durationMinutes: 150,
@@ -331,7 +445,7 @@ async function seed() {
         isPublished: true,
       },
       update: {
-        name: varchar150("親子で楽しむ西山公園2〜3時間コース"),
+        name: varchar150("親子で楽しむ西山公園コース"),
         nameEn: varchar150("2–3 Hour Family Course"),
         durationMinutes: 150,
         description:
@@ -410,6 +524,29 @@ async function seed() {
         });
       }
       additionalCourses.push({ lensId: addedLens.id, courseId: addedCourse.id, name: item.name });
+    }
+
+    const durationCourses = [];
+    for (const item of durationCourseSeeds) {
+      const owner = await tx.orm.public.Lens.where({ companion: item.companion, interest: item.interest }).first();
+      if (!owner) throw new Error("Required course Lens is missing: " + item.interest);
+      const data = { name: varchar150(item.name), nameEn: varchar150(item.nameEn),
+        description: item.description, descriptionEn: item.descriptionEn,
+        durationMinutes: item.durationMinutes, imageUrl: null, isPublished: true };
+      const added = await tx.orm.public.Course.upsert({
+        create: { id: randomUUID(), lensId: owner.id, durationType: item.durationType, ...data },
+        update: data, conflictOn: { lensId: owner.id, durationType: item.durationType },
+      });
+      for (const [index, slug] of item.spots.entries()) {
+        const spot = spots.get(slug);
+        if (!spot) throw new Error("Required duration course Spot is missing: " + slug);
+        const data = { spotId: spot.id, stayMinutes: null, walkMinutesFromPrevious: null, note: null, noteEn: null };
+        await tx.orm.public.CourseSpot.upsert({
+          create: { id: randomUUID(), courseId: added.id, sortOrder: index + 1, ...data },
+          update: data, conflictOn: { courseId: added.id, sortOrder: index + 1 },
+        });
+      }
+      durationCourses.push({ id: added.id, lensId: owner.id });
     }
 
     const zoo = spots.get("nishiyama-zoo");
@@ -587,6 +724,7 @@ async function seed() {
 
     return {
       additionalCourses,
+      durationCourses,
       lensId: lens.id,
       courseId: course.id,
       zooId: zoo.id,
@@ -643,7 +781,7 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
   for (const [index, item] of additionalCourseSeeds.entries()) {
     const added = ids.additionalCourses[index];
     const matchingLenses = await db.orm.public.Lens.where({ companion: item.companion, interest: item.interest }).all();
-    const matchingCourses = await db.orm.public.Course.where({ lensId: added.lensId }).all();
+    const matchingCourses = await db.orm.public.Course.where({ lensId: added.lensId, durationType: item.durationType }).all();
     const links = await db.orm.public.CourseSpot.where({ courseId: added.courseId }).orderBy((link) => link.sortOrder.asc()).all();
     additionalChecks.push(matchingLenses.length === 1 && matchingLenses[0].id === added.lensId
       && matchingLenses[0].isPublished && matchingLenses[0].titleEn === item.titleEn
@@ -655,7 +793,27 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
   }
 
   const legacyPandaLenses = await db.orm.public.Lens.where({ companion: "SMALL_CHILDREN", interest: "PANDA" }).all();
+  const durationChecks = [];
+  for (const [index, item] of durationCourseSeeds.entries()) {
+    const expected = ids.durationCourses[index];
+    const rows = await db.orm.public.Course.where({ lensId: expected.lensId, durationType: item.durationType }).all();
+    const links = await db.orm.public.CourseSpot.where({ courseId: expected.id }).orderBy((link) => link.sortOrder.asc()).all();
+    durationChecks.push(rows.length === 1 && rows[0].id === expected.id && rows[0].isPublished
+      && rows[0].name === item.name && rows[0].nameEn === item.nameEn
+      && rows[0].durationMinutes === item.durationMinutes
+      && rows[0].description === item.description && rows[0].descriptionEn === item.descriptionEn
+      && links.length === item.spots.length && links.every((link, i) => link.sortOrder === i + 1
+        && link.spotId === seededSpots.find((spot) => spot.slug === item.spots[i])?.id));
+  }
+  const seededLensIds = [ids.lensId, ...ids.additionalCourses.map((item) => item.lensId)];
+  const allSeededCourses = (await db.orm.public.Course.all()).filter((item) => seededLensIds.includes(item.lensId));
+  const completeDurations = seededLensIds.every((id) => {
+    const rows = allSeededCourses.filter((item) => item.lensId === id);
+    return rows.length === 3 && ["MINUTES_30_60", "HOURS_1_2", "HOURS_2_3"].every((duration) =>
+      rows.filter((item) => item.durationType === duration && item.isPublished).length === 1);
+  });
   const checks = {
+    twelveCourses: completeDurations && durationChecks.every(Boolean),
     noLegacyPanda: legacyPandaLenses.length === 0,
     additionalCourses: additionalChecks.every(Boolean),
     seasonalData: seasons.length === 2 && seasonalFinds.length === 2 && seasons.every((season) => {
@@ -703,10 +861,10 @@ async function verify(ids: Awaited<ReturnType<typeof seed>>) {
 
   return {
     counts: {
-      lens: lenses.length,
-      course: courses.length,
+      lens: seededLensIds.length,
+      course: allSeededCourses.length,
       spot: seededSpots.length,
-      courseSpot: courseSpots.length,
+      courseSpot: (await db.orm.public.CourseSpot.all()).filter((link) => allSeededCourses.some((course) => course.id === link.courseId)).length,
       todaysFind: allFinds.length,
       season: seasons.length,
       seasonalFind: seasonalFinds.length,

@@ -21,7 +21,6 @@ type ResultPageProps = {
   searchParams: Promise<{
     companion?: string | string[];
     interest?: string | string[];
-    duration?: string | string[];
   }>;
 };
 
@@ -34,7 +33,7 @@ export default async function LensResultPage({ searchParams }: ResultPageProps) 
         <EmptyResult
           eyebrow="INVALID ANSWERS"
           title="診断内容を確認できませんでした。"
-          description="お手数ですが、もう一度3つの質問に答えてください。"
+          description="お手数ですが、もう一度2つの質問に答えてください。"
         />
       </ResultLayout>
     );
@@ -62,12 +61,8 @@ export default async function LensResultPage({ searchParams }: ResultPageProps) 
     return (
       <ResultLayout>
         <EmptyResult
-          eyebrow={
-            result.reason === "COURSE_NOT_FOUND"
-              ? "COURSE COMING SOON"
-              : "LENS COMING SOON"
-          }
-          title="この組み合わせのおすすめは準備中です。"
+          eyebrow="LENS COMING SOON"
+          title="このLENSは現在準備中です。"
           description="別の楽しみ方も、ぜひ試してみてください。"
         />
       </ResultLayout>
@@ -97,11 +92,11 @@ function ResultLayout({ children }: { children: React.ReactNode }) {
       />
 
       <header className="relative z-10 border-b border-[#d9ddd3] bg-[#fffdf8]/90 px-5 py-5 backdrop-blur-sm sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
           <Link
             href="/"
             aria-label="NISHIYAMA LENS トップ"
-            className="text-sm font-bold tracking-[0.16em] sm:text-base sm:tracking-[0.2em]"
+            className="text-sm font-bold tracking-[0.16em] focus-visible:outline-2 focus-visible:outline-offset-4 sm:text-base sm:tracking-[0.2em]"
           >
             NISHIYAMA LENS
           </Link>
@@ -122,105 +117,40 @@ function ResultLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function RecommendationResult({
-  input,
-  recommendation,
-}: {
+// Presentation only: keep stored Course names and detail-page wording unchanged.
+function courseCardName(name: string): string {
+  return name.replace(/30〜60分|1〜2時間|2〜3時間/g, "")
+    .replace(/(?<!レッサー)パンダ/g, "レッサーパンダ");
+}
+
+function RecommendationResult({ input, recommendation }: {
   input: LensRecommendationInput;
-  recommendation: NonNullable<
-    LensRecommendationResponse["recommendation"]
-  >;
+  recommendation: NonNullable<LensRecommendationResponse["recommendation"]>;
 }) {
-  const { lens, course } = recommendation;
-
-  return (
-    <>
-      <div className="max-w-2xl">
-        <p className="text-[0.68rem] font-bold tracking-[0.25em] text-[#9a805a]">
-          YOUR NISHIYAMA LENS
-        </p>
-        <p className="mt-4 text-sm leading-7 text-[#68736c]">
-          3つの回答から、今日のあなたに合う楽しみ方を見つけました。
-        </p>
-      </div>
-
-      <section
-        aria-labelledby="lens-result-title"
-        className="relative mt-9 overflow-hidden rounded-[2rem] bg-[#173e30] px-6 py-9 text-white shadow-[0_28px_80px_rgba(21,58,44,0.2)] sm:mt-12 sm:px-10 sm:py-12 lg:px-14 lg:py-14"
-      >
-        <div
-          aria-hidden="true"
-          className="absolute -right-16 -top-20 size-64 rounded-full border border-white/10"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute -bottom-24 right-16 size-52 rounded-full border border-[#d7c69d]/15"
-        />
-        <div className="relative max-w-3xl">
-          <p className="text-[0.68rem] font-bold tracking-[0.24em] text-[#d7c69d]">
-            あなたのLENSは…
-          </p>
-          <h1
-            id="lens-result-title"
-            className="mt-4 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl lg:text-6xl"
-          >
-            {lens.name}
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-white/82 sm:text-lg">
-            {lens.description}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-2">
-            <ResultTag>{companionLabels[input.companion]}</ResultTag>
-            <ResultTag>{interestLabels[input.interest]}を楽しむ</ResultTag>
-          </div>
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="recommended-course-title"
-        className="mt-5 rounded-[2rem] border border-[#e0e3d9] bg-[#fffdf8] px-6 py-8 shadow-[0_18px_55px_rgba(40,55,42,0.08)] sm:mt-6 sm:px-10 sm:py-10 lg:px-14 lg:py-12"
-      >
-        <p className="text-[0.68rem] font-bold tracking-[0.24em] text-[#9a805a]">
-          RECOMMENDED COURSE
-        </p>
-        <h2
-          id="recommended-course-title"
-          className="mt-4 max-w-3xl text-2xl font-medium leading-snug tracking-[-0.03em] sm:text-3xl lg:text-4xl"
-        >
-          {course.name}
-        </h2>
-
-        <dl className="mt-7 grid gap-3 rounded-[1.25rem] bg-[#f1f0e7] px-5 py-5 sm:grid-cols-2 sm:px-6">
-          <div>
-            <dt className="text-xs font-semibold text-[#768078]">過ごし方の目安</dt>
-            <dd className="mt-1 text-lg font-semibold">
-              {durationLabels[course.durationType]}
-            </dd>
-          </div>
-          <div className="border-t border-[#daddd4] pt-3 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-            <dt className="text-xs font-semibold text-[#768078]">所要時間</dt>
-            <dd className="mt-1 text-lg font-semibold">約{course.durationMinutes}分</dd>
-          </div>
-        </dl>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Link
-            href={`/courses/${course.id}`}
-            className="inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-[#174a36] px-7 text-sm font-bold text-white shadow-[0_12px_30px_rgba(23,74,54,0.18)] transition-colors hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]"
-          >
-            このコースを見る
-            <ArrowIcon />
+  const { lens, courses } = recommendation;
+  return <>
+    <p className="text-sm leading-7 text-[#53665a]">あなたのLENSが見つかりました</p>
+    <section aria-labelledby="lens-result-title" className="mt-5 rounded-[2rem] bg-[#173e30] px-5 py-9 text-white sm:px-10 sm:py-12">
+      <p className="text-xs font-bold tracking-[0.24em] text-[#d7c69d]" lang="en">YOUR LENS</p>
+      <h1 id="lens-result-title" lang="en" className="mt-5 text-3xl font-semibold leading-tight tracking-tight [overflow-wrap:anywhere] sm:text-5xl">{lens.name}</h1>
+      <p className="mt-6 whitespace-pre-line break-words text-base leading-8 text-white/85">{lens.description}</p>
+      <div className="mt-7 flex flex-wrap gap-2"><ResultTag>{input.companion === "FAMILY" ? "家族と" : companionLabels[input.companion]}</ResultTag><ResultTag>{interestLabels[input.interest]}を楽しむ</ResultTag></div>
+    </section>
+    <section aria-labelledby="course-selection-title" className="mt-10">
+      <h2 id="course-selection-title" className="text-2xl font-medium leading-relaxed">このLENSで、今日はどれくらい楽しむ？</h2>
+      <p className="mt-3 text-sm leading-7 text-[#53665a]">過ごせる時間に合わせて、コースを選んでください。</p>
+      {courses.length === 0 ? <p className="mt-6 rounded-2xl bg-[#fffdf8] p-6">このLENSのコースは現在準備中です。</p> :
+        <ul className="mt-6 grid gap-5 lg:grid-cols-3">{courses.map((course) => <li key={course.id} className="min-w-0">
+          <Link href={"/courses/" + course.id} className="flex h-full flex-col rounded-3xl border border-[#cbd4c7] bg-[#fffdf8] p-6 transition-colors hover:bg-[#edf1e7] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174a36]">
+            <p className="text-xl font-bold text-[#174a36]">{durationLabels[course.durationType]}</p>
+            <h3 className="mt-4 break-words text-lg font-semibold leading-8">{courseCardName(course.name)}</h3>
+            {course.description && <p className="mt-3 whitespace-pre-line break-words text-sm leading-7 text-[#53665a]">{course.description}</p>}
+            <span className="mt-auto inline-flex min-h-12 items-center gap-2 pt-4 text-sm font-bold underline underline-offset-4">このコースを見る<ArrowIcon /></span>
           </Link>
-          <Link
-            href="/lens"
-            className="inline-flex min-h-14 items-center justify-center rounded-full border border-[#b9c3b8] bg-white px-7 text-sm font-semibold text-[#365746] transition-colors hover:bg-[#f2f3ed] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]"
-          >
-            診断をやり直す
-          </Link>
-        </div>
-      </section>
-    </>
-  );
+        </li>)}</ul>}
+    </section>
+    <Link href="/lens" className="mt-8 inline-flex min-h-12 items-center rounded-full border border-[#b9c3b8] px-6 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">診断をやり直す</Link>
+  </>;
 }
 
 function EmptyResult({
