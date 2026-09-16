@@ -1,5 +1,7 @@
 "use client";
 
+import { navigationHref, type Query } from "@/lib/language";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LensOptionCard } from "./LensOptionCard";
@@ -12,7 +14,7 @@ import type {
 
 const totalSteps = lensQuestions.length;
 
-export function LensDiagnosisClient() {
+export function LensDiagnosisClient({ query }: { query: Query }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<LensAnswers>({});
@@ -58,7 +60,7 @@ export function LensDiagnosisClient() {
       companion: answers.companion,
       interest: answers.interest,
     });
-    router.push(`/lens/result?${searchParams.toString()}`);
+    router.push(navigationHref(`/lens/result?${searchParams.toString()}`, query));
   }
 
   return (

@@ -1,3 +1,4 @@
+import { navigationHref, type Query } from "@/lib/language";
 import { safeExternalUrl } from "@/lib/external-url";
 import { getCourseDetail } from "@/lib/server/course-detail";
 import FindCamera from "@/components/find/FindCamera";
@@ -19,11 +20,12 @@ function sexLabel(value: string): string {
   return Object.hasOwn(labels, key) ? labels[key] : value;
 }
 
-export default async function SpotPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ courseId?: string | string[] }> }) {
+export default async function SpotPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<Query> }) {
   const { slug } = await params;
   const spot = await getSpotDetail(slug);
   if (!spot) notFound();
-  const { courseId } = await searchParams;
+  const query = await searchParams;
+  const { courseId } = query;
   const candidate = typeof courseId === "string" ? await getCourseDetail(courseId) : null;
   const course = candidate?.courseSpots.some(({ spot: member }) => member?.id === spot.id) ? candidate : null;
   const todaysFinds = await getTodaysFinds(spot.id, course?.lensId);
@@ -47,7 +49,7 @@ export default async function SpotPage({ params, searchParams }: { params: Promi
         {find.season && <div className="mb-3 text-sm leading-7 text-[#53665a]"><p className="font-semibold">この季節の楽しみ：{find.season.name}</p>{find.season.description && <p className="mt-2 whitespace-pre-line break-words">{find.season.description}</p>}</div>}
         <h3 className="break-words text-xl font-semibold leading-relaxed">{find.title}</h3>
         <p className="mt-3 whitespace-pre-line break-words text-sm leading-8 text-[#53665a]">{find.description}</p>
-        <FindCamera title={find.title} courseId={course?.id} />
+        <FindCamera title={find.title} courseId={course?.id} query={query} />
       </li>)}</ul>
     </section>}
     {amenities.length > 0 && <section aria-labelledby="amenities-title" className="mt-8 rounded-3xl border border-[#e0e3d9] bg-[#fffdf8] p-6 sm:p-8">
@@ -67,6 +69,6 @@ export default async function SpotPage({ params, searchParams }: { params: Promi
         {panda.description && <p className="mt-5 whitespace-pre-line break-words text-sm leading-8 text-[#53665a]">{panda.description}</p>}
       </li>)}</ul>
     </section>}
-    <nav aria-label="次のアクション" className="mt-10"><Link href="/lens" className="inline-flex min-h-14 items-center rounded-full bg-[#174a36] px-7 py-3 text-sm font-bold text-white hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-4">LENSでコースを探す</Link></nav>
+    <nav aria-label="次のアクション" className="mt-10"><Link href={navigationHref("/lens", query)} className="inline-flex min-h-14 items-center rounded-full bg-[#174a36] px-7 py-3 text-sm font-bold text-white hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-4">LENSでコースを探す</Link></nav>
   </>;
 }

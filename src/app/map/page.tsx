@@ -1,3 +1,4 @@
+import { navigationHref, type Query } from "@/lib/language";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,9 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function MapPage({ searchParams }: {
-  searchParams: Promise<{ courseId?: string | string[] }>;
+  searchParams: Promise<Query>;
 }) {
-  const { courseId } = await searchParams;
+  const query = await searchParams;
+  const { courseId } = query;
   if (typeof courseId !== "string") notFound();
   const course = await getCourseMap(courseId);
   if (!course) notFound();
@@ -24,7 +26,7 @@ export default async function MapPage({ searchParams }: {
       <h1 className="mt-3 break-words text-2xl font-medium leading-relaxed sm:text-3xl">{course.name}</h1>
       <p className="mt-3 text-sm leading-7 text-[#53665a]">番号のピンを押すと、スポット名と楽しみ方を確認できます。</p>
       <div className="mt-7">
-        <MapClient key={course.id} courseId={course.id} spots={course.spots} />
+        <MapClient key={course.id} courseId={course.id} spots={course.spots} query={query} />
       </div>
       <section aria-labelledby="map-spots-title" className="mt-8 rounded-3xl border border-[#e0e3d9] bg-[#fffdf8] p-5 sm:p-7">
         <h2 id="map-spots-title" className="text-lg font-semibold">地図に表示するスポット（{course.spots.length}件）</h2>
@@ -44,7 +46,7 @@ export default async function MapPage({ searchParams }: {
           </ol>
         )}
       </section>
-      <Link href={`/courses/${course.id}`} className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full border border-[#b9c3b8] bg-[#fffdf8] px-6 text-sm font-semibold hover:bg-[#edf1e7] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]">
+      <Link href={navigationHref(`/courses/${course.id}`, query)} className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full border border-[#b9c3b8] bg-[#fffdf8] px-6 text-sm font-semibold hover:bg-[#edf1e7] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]">
         コース詳細に戻る
       </Link>
     </>

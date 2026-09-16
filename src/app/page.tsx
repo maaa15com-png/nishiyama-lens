@@ -1,58 +1,62 @@
 import Link from "next/link";
+import GlobalHeader from "@/components/navigation/GlobalHeader";
+import { languageHref, parseLang, type Lang, type Query } from "@/lib/language";
 import type { ReactNode } from "react";
 import styles from "./page.module.css";
 
-const highlights = [
+type HomeProps = { lang: Lang; query: Query };
+
+const highlights = (lang: Lang) => [
   {
     number: "01",
-    title: "動物に会う",
-    description: "愛らしいレッサーパンダと、目線が合うひととき。",
+    title: lang === "en" ? "Meet the animals" : "動物に会う",
+    description: lang === "en" ? "Share a moment with the adorable red pandas." : "愛らしいレッサーパンダと、目線が合うひととき。",
     className: styles.featureZoo,
     icon: <PandaIcon />,
   },
   {
     number: "02",
-    title: "四季を感じる",
-    description: "春のつつじ、秋の紅葉。訪れるたびに違う色。",
+    title: lang === "en" ? "Enjoy the seasons" : "四季を感じる",
+    description: lang === "en" ? "Spring azaleas and autumn leaves. New colors on every visit." : "春のつつじ、秋の紅葉。訪れるたびに違う色。",
     className: styles.featureSeason,
     icon: <LeafIcon />,
   },
   {
     number: "03",
-    title: "思いきり遊ぶ",
-    description: "森の遊具を駆けめぐって、家族の思い出を。",
+    title: lang === "en" ? "Time to play" : "思いきり遊ぶ",
+    description: lang === "en" ? "Explore the woodland playground and make family memories." : "森の遊具を駆けめぐって、家族の思い出を。",
     className: styles.featurePlay,
     icon: <PlayIcon />,
   },
   {
     number: "04",
-    title: "のんびり歩く",
-    description: "木漏れ日の小径を、気の向くままに散策。",
+    title: lang === "en" ? "Take a quiet walk" : "のんびり歩く",
+    description: lang === "en" ? "Wander sunlit paths at your own pace." : "木漏れ日の小径を、気の向くままに散策。",
     className: styles.featureWalk,
     icon: <WalkIcon />,
   },
 ] as const;
 
-const lensQuestions = [
-  { number: "01", label: "誰と行くか", en: "COMPANION" },
-  { number: "02", label: "何を楽しみたいか", en: "INTEREST" },
-  { number: "03", label: "どのくらい過ごせるか", en: "DURATION" },
+const lensQuestions = (lang: Lang) => [
+  { number: "01", label: lang === "en" ? "Who are you visiting with?" : "誰と行くか", en: "COMPANION" },
+  { number: "02", label: lang === "en" ? "What would you like to enjoy?" : "何を楽しみたいか", en: "INTEREST" },
+  { number: "03", label: lang === "en" ? "How much time do you have?" : "どのくらい過ごせるか", en: "DURATION" },
 ] as const;
 
-function PrimaryCta({ inverse = false }: { inverse?: boolean }) {
+function PrimaryCta({ lang, query, inverse = false }: HomeProps & { inverse?: boolean }) {
   return (
     <Link
-      href="/lens"
+      href={languageHref("/lens", query, lang)}
       className={`group inline-flex min-h-14 items-center justify-center gap-3 rounded-full px-6 py-3 text-center text-sm font-bold tracking-[0.04em] transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 sm:px-8 ${
         inverse
           ? "bg-[#f5f0e4] text-[#173e30] hover:bg-white focus-visible:outline-[#f5f0e4]"
           : "bg-[#174a36] text-white shadow-[0_12px_32px_rgba(23,74,54,0.2)] hover:-translate-y-0.5 hover:bg-[#0f3929] focus-visible:outline-[#174a36]"
       }`}
     >
-      わたしに合う楽しみ方を見つける
+      {lang === "en" ? "Find my way to enjoy the park" : "わたしに合う楽しみ方を見つける"}
       <span
         aria-hidden="true"
-        className="grid size-7 place-items-center rounded-full border border-current/25 transition-transform duration-300 group-hover:translate-x-1"
+        className="grid size-7 shrink-0 place-items-center rounded-full border border-current/25 transition-transform duration-300 group-hover:translate-x-1"
       >
         <ArrowIcon />
       </span>
@@ -60,39 +64,7 @@ function PrimaryCta({ inverse = false }: { inverse?: boolean }) {
   );
 }
 
-function Header() {
-  return (
-    <header className="absolute inset-x-0 top-0 z-20 px-5 pt-5 text-white sm:px-8 sm:pt-7 lg:px-12">
-      <div className="mx-auto grid max-w-7xl grid-cols-[2.75rem_1fr_2.75rem] items-center border-b border-white/35 pb-4 sm:pb-5">
-        <button
-          type="button"
-          disabled
-          aria-label="メニュー（準備中）"
-          className="grid size-11 cursor-not-allowed place-items-center rounded-full border border-white/45 opacity-70"
-        >
-          <MenuIcon />
-        </button>
-
-        <Link
-          href="/"
-          aria-label="NISHIYAMA LENS トップ"
-          className="justify-self-center text-center font-semibold tracking-[0.2em] sm:text-lg"
-        >
-          NISHIYAMA LENS
-        </Link>
-
-        <span
-          aria-label="現在の言語：日本語。言語切替は準備中です"
-          className="grid size-11 place-items-center justify-self-end rounded-full border border-white/45 text-[0.65rem] font-bold tracking-[0.16em]"
-        >
-          JP
-        </span>
-      </div>
-    </header>
-  );
-}
-
-function Hero() {
+function Hero({ lang, query }: HomeProps) {
   return (
     <section className="relative min-h-[45rem] overflow-hidden bg-[#264f3e] text-white sm:min-h-[50rem] lg:min-h-[54rem]">
       <div className={`${styles.heroLandscape} absolute inset-0`} aria-hidden="true">
@@ -113,17 +85,18 @@ function Hero() {
             NISHIYAMA PARK, FUKUI
           </p>
           <h1 className="text-[clamp(2.7rem,10vw,6.5rem)] font-medium leading-[0.95] tracking-[-0.04em] text-balance">
-            見方を変えると、
+            {lang === "en" ? "See the park anew." : "見方を変えると、"}
             <br />
-            公園は旅になる。
+            {lang === "en" ? "Let a journey begin." : "公園は旅になる。"}
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-7 text-white/82 sm:text-base sm:leading-8">
-            動物、季節、遊び、ひと休み。
+            {lang === "en" ? "Animals, seasons, play, and a moment to rest. " : "動物、季節、遊び、ひと休み。"}
             <br className="sm:hidden" />
-            いつもの公園に、まだ知らない一日を見つけよう。
+            {lang === "en" ? "Discover a new kind of day in a familiar park." : "いつもの公園に、まだ知らない一日を見つけよう。"}
           </p>
           <div className="mt-8 sm:mt-10">
-            <PrimaryCta inverse />
+            <PrimaryCta lang={lang} query={query} inverse />
+            <p lang="en" className="mt-3 text-xs leading-5 text-white/80">LENS quiz — Japanese only</p>
           </div>
         </div>
       </div>
@@ -163,7 +136,7 @@ function FeatureCard({
   description,
   className,
   icon,
-}: (typeof highlights)[number]) {
+}: ReturnType<typeof highlights>[number]) {
   return (
     <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_20px_55px_rgba(40,55,42,0.08)]">
       <div
@@ -189,21 +162,21 @@ function FeatureCard({
   );
 }
 
-function ParkHighlights() {
+function ParkHighlights({ lang }: Pick<HomeProps, "lang">) {
   return (
     <section className="bg-[#f5f1e7] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading eyebrow="DISCOVER THE PARK">
-            知ってる？西山公園
+            {lang === "en" ? "Discover Nishiyama Park" : "知ってる？西山公園"}
           </SectionHeading>
           <p className="max-w-sm text-sm leading-7 text-[#68736c] sm:text-right">
-            小さな山のふもとに、家族で楽しめる景色がぎゅっと詰まっています。
+            {lang === "en" ? "At the foot of a small hill, discover a park full of things to enjoy as a family." : "小さな山のふもとに、家族で楽しめる景色がぎゅっと詰まっています。"}
           </p>
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
-          {highlights.map((highlight) => (
+          {highlights(lang).map((highlight) => (
             <FeatureCard key={highlight.number} {...highlight} />
           ))}
         </div>
@@ -212,21 +185,21 @@ function ParkHighlights() {
   );
 }
 
-function LensIntroduction() {
+function LensIntroduction({ lang }: Pick<HomeProps, "lang">) {
   return (
     <section className="bg-[#fffdf8] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36">
       <div className="mx-auto max-w-6xl">
         <SectionHeading eyebrow="FIND YOUR LENS" center>
-          あなたに合った、
+          {lang === "en" ? "Your own way to enjoy " : "あなたに合った、"}
           <br className="sm:hidden" />
-          西山公園の楽しみ方。
+          {lang === "en" ? "Nishiyama Park." : "西山公園の楽しみ方。"}
         </SectionHeading>
         <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-[#68736c] sm:text-base sm:leading-8">
-          ２つの質問から、今のあなたにちょうどいい過ごし方をご提案します。
+          {lang === "en" ? "Answer two questions to find a park experience that suits you today." : "２つの質問から、今のあなたにちょうどいい過ごし方をご提案します。"}
         </p>
 
         <ol className="relative mt-12 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-5">
-          {lensQuestions.map((question, index) => (
+          {lensQuestions(lang).map((question, index) => (
             <li
               key={question.number}
               className="relative flex min-h-40 items-center gap-5 rounded-[1.5rem] border border-[#dfe3d8] bg-white px-6 py-6 sm:block sm:min-h-52 sm:px-7 sm:py-7"
@@ -242,7 +215,7 @@ function LensIntroduction() {
                   {question.en}
                 </p>
               </div>
-              {index < lensQuestions.length - 1 ? (
+              {index < lensQuestions(lang).length - 1 ? (
                 <span
                   aria-hidden="true"
                   className="absolute -bottom-3 left-1/2 z-10 grid size-6 -translate-x-1/2 place-items-center rounded-full bg-[#174a36] text-xs text-white sm:-right-3 sm:bottom-auto sm:left-auto sm:top-1/2 sm:-translate-y-1/2 sm:translate-x-0"
@@ -258,7 +231,7 @@ function LensIntroduction() {
   );
 }
 
-function FamilyPandaExample() {
+function FamilyPandaExample({ lang }: Pick<HomeProps, "lang">) {
   return (
     <section className="bg-[#fffdf8] px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12 lg:pb-36">
       <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] bg-[#183f31] text-white shadow-[0_28px_80px_rgba(21,58,44,0.18)] lg:grid-cols-[0.95fr_1.05fr] lg:rounded-[2.5rem]">
@@ -266,19 +239,19 @@ function FamilyPandaExample() {
           <p className="text-[0.68rem] font-bold tracking-[0.25em] text-[#d7c69d]">
             ONE LENS FOR YOU
           </p>
-          <p className="mt-8 text-sm text-white/65">たとえば、こんな楽しみ方。</p>
+          <p className="mt-8 text-sm text-white/65">{lang === "en" ? "Here is one way to spend your day." : "たとえば、こんな楽しみ方。"}</p>
           <h2 className="mt-3 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
             FAMILY <span className="font-light text-[#d7c69d]">×</span> PANDA
           </h2>
           <p className="mt-6 max-w-lg text-lg leading-8 text-white/90 sm:text-xl">
-            小さな子どもと、
+            {lang === "en" ? "Bring your little ones" : "小さな子どもと、"}
             <br />
-            レッサーパンダや遊び場を楽しむ
+            {lang === "en" ? "to enjoy red pandas and playgrounds." : "レッサーパンダや遊び場を楽しむ"}
           </p>
           <div className="mt-10 border-t border-white/20 pt-6 text-sm leading-7 text-white/66">
-            その人らしい西山公園の見方を、
+            {lang === "en" ? "A personal way of seeing Nishiyama Park:" : "その人らしい西山公園の見方を、"}
             <br />
-            NISHIYAMA LENSでは「LENS」と呼びます。
+            {lang === "en" ? "that is what we call a “LENS”." : "NISHIYAMA LENSでは「LENS」と呼びます。"}
           </div>
         </div>
 
@@ -302,7 +275,7 @@ function FamilyPandaExample() {
   );
 }
 
-function FinalCta() {
+function FinalCta({ lang, query }: HomeProps) {
   return (
     <section className="relative overflow-hidden bg-[#e8e1cf] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32">
       <div className={`${styles.finalRings} absolute inset-0`} aria-hidden="true" />
@@ -311,61 +284,56 @@ function FinalCta() {
           START YOUR JOURNEY
         </p>
         <h2 className="mt-5 text-3xl font-medium leading-tight tracking-[-0.03em] text-[#173e30] sm:text-5xl">
-          今日のあなたは、
+          {lang === "en" ? "What will you discover" : "今日のあなたは、"}
           <br />
-          どんな公園を旅する？
+          {lang === "en" ? "in the park today?" : "どんな公園を旅する？"}
         </h2>
         <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-[#617066]">
-          2つの質問に答えて、あなたらしい西山公園の一日を見つけてみましょう。
+          {lang === "en" ? "Answer two questions and discover your own day at Nishiyama Park." : "2つの質問に答えて、あなたらしい西山公園の一日を見つけてみましょう。"}
         </p>
         <div className="mt-9">
-          <PrimaryCta />
+          <PrimaryCta lang={lang} query={query} />
+          <p lang="en" className="mt-3 text-xs leading-5 text-[#617066]">LENS quiz — Japanese only</p>
         </div>
       </div>
     </section>
   );
 }
 
-function Footer() {
+function Footer({ lang, query }: { lang: Lang; query: Query }) {
   return (
-    <footer className="bg-[#103326] px-5 py-8 text-white/60 sm:px-8 lg:px-12">
+    <footer lang={lang} className="bg-[#103326] px-5 py-8 text-white/60 sm:px-8 lg:px-12">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between">
         <p className="font-semibold tracking-[0.18em] text-white/85">
           NISHIYAMA LENS
         </p>
-        <nav aria-label="公園の基本情報" className="flex flex-wrap gap-3">
-          <Link href="/park?lang=ja" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">公園について</Link>
-          <Link href="/news?lang=ja" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">お知らせ</Link>
-          <Link href="/events?lang=ja" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">イベント</Link>
-          <Link href="/park?lang=en" lang="en" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">English guide</Link>
+        <nav aria-label={lang === "en" ? "Park information" : "公園の基本情報"} className="flex flex-wrap gap-3">
+          <Link href={languageHref("/park", query, lang)} className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">{lang === "en" ? "About the park" : "公園について"}</Link>
+          <Link href={languageHref("/news", query, lang)} className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">{lang === "en" ? "News" : "お知らせ"}</Link>
+          <Link href={languageHref("/events", query, lang)} className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">{lang === "en" ? "Events" : "イベント"}</Link>
+          <Link href={languageHref("/park", query, "en")} lang="en" className="inline-flex min-h-11 items-center underline focus-visible:outline-2 focus-visible:outline-offset-4">English guide</Link>
         </nav>
-        <p>見方を変えると、公園は旅になる。</p>
+        <p>{lang === "en" ? "See the park anew. Let a journey begin." : "見方を変えると、公園は旅になる。"}</p>
       </div>
     </footer>
   );
 }
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<Query> }) {
+  const query = await searchParams;
+  const lang = parseLang(query.lang);
   return (
     <>
-      <Header />
-      <main className="overflow-hidden">
-        <Hero />
-        <ParkHighlights />
-        <LensIntroduction />
-        <FamilyPandaExample />
-        <FinalCta />
+      <GlobalHeader variant="overlay" path="/" key={languageHref("/", query, lang)} lang={lang} query={query} />
+      <main lang={lang} className="overflow-hidden">
+        <Hero lang={lang} query={query} />
+        <ParkHighlights lang={lang} />
+        <LensIntroduction lang={lang} />
+        <FamilyPandaExample lang={lang} />
+        <FinalCta lang={lang} query={query} />
       </main>
-      <Footer />
+      <Footer lang={lang} query={query} />
     </>
-  );
-}
-
-function MenuIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 fill-none stroke-current" strokeWidth="1.5">
-      <path d="M4 8h16M4 16h16" strokeLinecap="round" />
-    </svg>
   );
 }
 

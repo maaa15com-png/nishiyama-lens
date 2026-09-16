@@ -1,0 +1,64 @@
+/* Equal side columns keep the logo centered at every viewport width. */
+.row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 52px;
+  align-items: center;
+  column-gap: 8px;
+  width: 100%;
+}
+
+.roundControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+  height: 52px;
+  min-height: 52px;
+  max-height: 52px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.menuButton {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.logo {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.languageButton {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.header {
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+}
+.overlay {
+  position: absolute;
+  inset: 0 0 auto;
+  color: white;
+}
+.standard {
+  padding-bottom: 16px;
+  background: #fffdf8;
+  color: #173e30;
+  border-bottom: 1px solid #d9ddd3;
+}
+
+/* Keep the existing equal side columns even when the right cell is empty. */
+.japaneseRow {
+  grid-template-columns: 60px minmax(0, 1fr) 60px;
+}

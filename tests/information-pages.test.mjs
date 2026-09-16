@@ -20,7 +20,8 @@ function load(relative, data) {
     compilerOptions: { jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
   const context = { exports: {}, URL, URLSearchParams, Intl, Date, require(name) {
-    if (name === "next/link") return { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) };
+    if (name.endsWith(".module.css")) return { __esModule: true, default: {} };
+    if (name === "next/link") return { __esModule: true, default: ({ children, ...props }) => { delete props.scroll; return React.createElement("a", props, children); } };
     if (name === "next/navigation") return { notFound: () => { throw new Error("NOT_FOUND"); } };
     if (name === "@/lib/server/information") return {
       getNewsDetail: async () => data, getEventDetail: async () => data,

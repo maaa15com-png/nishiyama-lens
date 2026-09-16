@@ -1,16 +1,9 @@
-import Link from "next/link";
+import StandardHeader from "@/components/navigation/StandardHeader";
 
 export default function RecapLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f1e7] text-[#173e30]">
-      <header className="border-b border-[#d9ddd3] bg-[#fffdf8] px-5 py-5 sm:px-8">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
-          <Link href="/" aria-label="NISHIYAMA LENS トップ" className="text-sm font-bold tracking-[0.16em] focus-visible:outline-2 focus-visible:outline-offset-4 sm:text-base">
-            NISHIYAMA LENS
-          </Link>
-          <span className="text-[0.65rem] font-bold tracking-[0.18em] text-[#68736c]">RECAP</span>
-        </div>
-      </header>
+      <StandardHeader />
       <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-10 sm:px-8 sm:py-14">
         {children}
       </main>
