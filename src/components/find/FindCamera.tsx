@@ -1,10 +1,12 @@
 "use client";
 
+import { navigationHref, type Query } from "@/lib/language";
+
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
 import styles from "./FindCamera.module.css";
 
-export default function FindCamera({ title, courseId }: { title: string; courseId?: string }) {
+export default function FindCamera({ title, courseId, query }: { title: string; courseId?: string; query: Query }) {
   const inputId = useId();
   const input = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -87,7 +89,7 @@ export default function FindCamera({ title, courseId }: { title: string; courseI
         <p className="mt-2 text-sm">今日の発見、ひとつ達成！</p>
       </div>}
     </div>
-    {done && courseId && <Link href={`/recap?courseId=${encodeURIComponent(courseId)}`} className="mb-5 flex min-h-14 items-center justify-center rounded-2xl bg-[#174a36] px-5 py-4 text-center text-sm font-bold leading-7 text-white focus-visible:outline-2 focus-visible:outline-offset-4">今日選んだ楽しみ方を振り返る</Link>}
+    {done && courseId && <Link href={navigationHref(`/recap?courseId=${encodeURIComponent(courseId)}`, query)} className="mb-5 flex min-h-14 items-center justify-center rounded-2xl bg-[#174a36] px-5 py-4 text-center text-sm font-bold leading-7 text-white focus-visible:outline-2 focus-visible:outline-offset-4">今日選んだ楽しみ方を振り返る</Link>}
     <div className="flex flex-wrap gap-3">
       <button ref={trigger} type="button" className={`${buttonClass} bg-[#174a36] text-white hover:bg-[#0f3929]`}
         aria-describedby={`${inputId}-help`} onClick={() => {

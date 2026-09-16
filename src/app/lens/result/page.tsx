@@ -1,3 +1,5 @@
+import { navigationHref, type Query } from "@/lib/language";
+import StandardHeader from "@/components/navigation/StandardHeader";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -18,10 +20,7 @@ export const metadata: Metadata = {
 };
 
 type ResultPageProps = {
-  searchParams: Promise<{
-    companion?: string | string[];
-    interest?: string | string[];
-  }>;
+  searchParams: Promise<Query>;
 };
 
 export default async function LensResultPage({ searchParams }: ResultPageProps) {
@@ -30,7 +29,7 @@ export default async function LensResultPage({ searchParams }: ResultPageProps) 
   if (!isLensRecommendationInput(input)) {
     return (
       <ResultLayout>
-        <EmptyResult
+        <EmptyResult query={input}
           eyebrow="INVALID ANSWERS"
           title="診断内容を確認できませんでした。"
           description="お手数ですが、もう一度2つの質問に答えてください。"
@@ -48,7 +47,7 @@ export default async function LensResultPage({ searchParams }: ResultPageProps) 
 
     return (
       <ResultLayout>
-        <EmptyResult
+        <EmptyResult query={input}
           eyebrow="PLEASE TRY AGAIN"
           title="診断結果を読み込めませんでした。"
           description="時間をおいて、もう一度診断をお試しください。"
@@ -60,7 +59,7 @@ export default async function LensResultPage({ searchParams }: ResultPageProps) 
   if (!result.recommendation) {
     return (
       <ResultLayout>
-        <EmptyResult
+        <EmptyResult query={input}
           eyebrow="LENS COMING SOON"
           title="このLENSは現在準備中です。"
           description="別の楽しみ方も、ぜひ試してみてください。"
@@ -73,6 +72,7 @@ export default async function LensResultPage({ searchParams }: ResultPageProps) 
     <ResultLayout>
       <RecommendationResult
         input={input}
+        query={input}
         recommendation={result.recommendation}
       />
     </ResultLayout>
@@ -91,20 +91,7 @@ function ResultLayout({ children }: { children: React.ReactNode }) {
         className="pointer-events-none absolute -left-24 top-80 size-72 rounded-full bg-[#dce4d6]/65 blur-3xl"
       />
 
-      <header className="relative z-10 border-b border-[#d9ddd3] bg-[#fffdf8]/90 px-5 py-5 backdrop-blur-sm sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
-          <Link
-            href="/"
-            aria-label="NISHIYAMA LENS トップ"
-            className="text-sm font-bold tracking-[0.16em] focus-visible:outline-2 focus-visible:outline-offset-4 sm:text-base sm:tracking-[0.2em]"
-          >
-            NISHIYAMA LENS
-          </Link>
-          <span className="text-[0.65rem] font-bold tracking-[0.18em] text-[#7b857e]">
-            LENS RESULT
-          </span>
-        </div>
-      </header>
+      <StandardHeader />
 
       <main className="relative z-10 flex-1 px-5 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-16">
         <div className="mx-auto max-w-5xl">{children}</div>
@@ -123,7 +110,8 @@ function courseCardName(name: string): string {
     .replace(/(?<!レッサー)パンダ/g, "レッサーパンダ");
 }
 
-function RecommendationResult({ input, recommendation }: {
+function RecommendationResult({ input, recommendation, query }: {
+  query: Query;
   input: LensRecommendationInput;
   recommendation: NonNullable<LensRecommendationResponse["recommendation"]>;
 }) {
@@ -141,7 +129,7 @@ function RecommendationResult({ input, recommendation }: {
       <p className="mt-3 text-sm leading-7 text-[#53665a]">過ごせる時間に合わせて、コースを選んでください。</p>
       {courses.length === 0 ? <p className="mt-6 rounded-2xl bg-[#fffdf8] p-6">このLENSのコースは現在準備中です。</p> :
         <ul className="mt-6 grid gap-5 lg:grid-cols-3">{courses.map((course) => <li key={course.id} className="min-w-0">
-          <Link href={"/courses/" + course.id} className="flex h-full flex-col rounded-3xl border border-[#cbd4c7] bg-[#fffdf8] p-6 transition-colors hover:bg-[#edf1e7] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174a36]">
+          <Link href={navigationHref("/courses/" + course.id, query)} className="flex h-full flex-col rounded-3xl border border-[#cbd4c7] bg-[#fffdf8] p-6 transition-colors hover:bg-[#edf1e7] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174a36]">
             <p className="text-xl font-bold text-[#174a36]">{durationLabels[course.durationType]}</p>
             <h3 className="mt-4 break-words text-lg font-semibold leading-8">{courseCardName(course.name)}</h3>
             {course.description && <p className="mt-3 whitespace-pre-line break-words text-sm leading-7 text-[#53665a]">{course.description}</p>}
@@ -149,15 +137,17 @@ function RecommendationResult({ input, recommendation }: {
           </Link>
         </li>)}</ul>}
     </section>
-    <Link href="/lens" className="mt-8 inline-flex min-h-12 items-center rounded-full border border-[#b9c3b8] px-6 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">診断をやり直す</Link>
+    <Link href={navigationHref("/lens", query)} className="mt-8 inline-flex min-h-12 items-center rounded-full border border-[#b9c3b8] px-6 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">診断をやり直す</Link>
   </>;
 }
 
 function EmptyResult({
+  query,
   eyebrow,
   title,
   description,
 }: {
+  query: Query;
   eyebrow: string;
   title: string;
   description: string;
@@ -174,7 +164,7 @@ function EmptyResult({
         {description}
       </p>
       <Link
-        href="/lens"
+        href={navigationHref("/lens", query)}
         className="mt-8 inline-flex min-h-14 items-center justify-center rounded-full bg-[#174a36] px-7 text-sm font-bold text-white shadow-[0_12px_30px_rgba(23,74,54,0.18)] transition-colors hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#174a36]"
       >
         診断をやり直す

@@ -27,3 +27,21 @@ export function formatDate(epochMilliseconds: number, lang: Lang, withTime = fal
     timeZone: "Asia/Tokyo", dateStyle: "long", ...(withTime ? { timeStyle: "short" as const } : {}),
   }).format(new Date(epochMilliseconds));
 }
+
+// Works with URLSearchParams and Next's read-only search params.
+export function queryFromParams(params: Pick<URLSearchParams, "keys" | "getAll">): Query {
+  const query: Query = {};
+  for (const key of new Set(params.keys())) {
+    const values = params.getAll(key);
+    query[key] = values.length > 1 ? values : values[0];
+  }
+  return query;
+}
+
+// Internal navigation: keep context, but let the destination set its own IDs/answers.
+export function navigationHref(href: string, query: Query): string {
+  const [target, hash] = href.split("#", 2);
+  const [path, search = ""] = target.split("?", 2);
+  const merged = { ...query, ...queryFromParams(new URLSearchParams(search)) };
+  return languageHref(path, merged, parseLang(query.lang)) + (hash === undefined ? "" : "#" + hash);
+}
