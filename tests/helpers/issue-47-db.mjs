@@ -17,7 +17,7 @@ const relations = {
 };
 export function fixtureDatabase(initial = {}) {
   let rows = structuredClone(initial);
-  const modelNames = ["Lens", "Course", "CourseSpot", "Season", "TodaysFind", "CourseSpotSeason", "Spot", "NearbySpot", "LensNearbySpot", "RedPanda", "News", "Event"];
+  const modelNames = ["Lens", "Course", "CourseSpot", "Season", "TodaysFind", "CourseSpotSeason", "Spot", "NearbySpot", "LensNearbySpot", "RedPanda", "News", "Event", "ParkFacility"];
   for (const n of modelNames) rows[n] ??= [];
   function query(model, filters = [], fields = null, includes = [], orders = []) {
     const q = {
@@ -61,7 +61,7 @@ export function serverModules(db, overrides = {}) {
   function load(file) {
     const absolute = path.resolve(file);
     if (cache.has(absolute)) return cache.get(absolute);
-    const context = { exports: {}, Date, Intl, console, require(name) {
+    const context = { exports: {}, Date, Intl, URL, console, require(name) {
       if (name === "server-only") return {};
       if (name === "./db") return { db };
       if (name in overrides) return overrides[name];

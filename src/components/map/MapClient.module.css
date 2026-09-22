@@ -179,3 +179,30 @@
   font-weight: 700;
   white-space: nowrap;
 }
+
+/* Unnumbered amenities sit below Course markers, never replacing their labels. */
+.facilityMarker {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 3px solid #fffdf8;
+  border-radius: 10px;
+  background: #315a78;
+  color: white;
+  font: 700 19px/1 sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #173e3033;
+  z-index: 0;
+}
+.facilityMarker:focus-visible { outline: 3px solid #173e30; outline-offset: 3px; }
+.facilityPopup {
+  max-height: 230px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  padding: 6px 30px 6px 4px;
+  color: #173e30;
+}
+.facilityPopup h3 { font-size: 14px; line-height: 1.5; font-weight: 700; }
+.facilityPopup p { margin-top: 6px; font-size: 12px; line-height: 1.6; }

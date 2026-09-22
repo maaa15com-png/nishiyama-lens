@@ -11,7 +11,8 @@
     "postinstall": "prisma skills sync || exit 0",
     "db:seed:official-spots": "node prisma/seed-official-spots.mts",
     "db:seed:official-nearby-spots": "node prisma/seed-official-nearby-spots.mts",
-    "db:seed:issue-47": "node prisma/seed-issue-47.mts"
+    "db:seed:issue-47": "node prisma/seed-issue-47.mts",
+    "db:seed:park-facilities": "node prisma/seed-park-facilities.mts"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",

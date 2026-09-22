@@ -1,0 +1,83 @@
+[
+  {
+    "id": "table.park_facilities",
+    "label": "Create table \"park_facilities\"",
+    "summary": "Creates table \"park_facilities\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "park_facilities"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"park_facilities\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"park_facilities\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"park_facilities\"",
+        "sql": "CREATE TABLE \"public\".\"park_facilities\" (\n  \"created_at\" timestamptz(6) DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"description_en\" text,\n  \"external_url\" text,\n  \"id\" uuid NOT NULL,\n  \"is_published\" bool DEFAULT true NOT NULL,\n  \"latitude\" numeric(9,6) NOT NULL,\n  \"longitude\" numeric(9,6) NOT NULL,\n  \"name\" character varying(150) NOT NULL,\n  \"name_en\" character varying(150),\n  \"type\" text NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"park_facilities_latitude_range_9dd11892\" CHECK (latitude BETWEEN -90 AND 90),\n  CONSTRAINT \"park_facilities_longitude_range_5fbf98d2\" CHECK (longitude BETWEEN -180 AND 180),\n  CONSTRAINT \"park_facilities_type_check_fd738207\" CHECK (\"type\" IN ('TOILET', 'PARKING'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"park_facilities\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"park_facilities\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.park_facilities.park_facilities_name_type_key",
+    "label": "Add unique constraint on \"park_facilities\" (name, type)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "park_facilities_name_type_key",
+        "table": "park_facilities"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"park_facilities_name_type_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "park_facilities_name_type_key",
+          "public",
+          "\"public\".\"park_facilities\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"park_facilities_name_type_key\"",
+        "sql": "ALTER TABLE \"public\".\"park_facilities\" ADD CONSTRAINT \"park_facilities_name_type_key\" UNIQUE (\"name\", \"type\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"park_facilities_name_type_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "park_facilities_name_type_key",
+          "public",
+          "\"public\".\"park_facilities\""
+        ]
+      }
+    ]
+  }
+]
