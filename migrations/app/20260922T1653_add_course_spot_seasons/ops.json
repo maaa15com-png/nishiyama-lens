@@ -1,0 +1,326 @@
+[
+  {
+    "id": "table.course_spot_seasons",
+    "label": "Create table \"course_spot_seasons\"",
+    "summary": "Creates table \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"course_spot_seasons\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"course_spot_seasons\"",
+        "sql": "CREATE TABLE \"public\".\"course_spot_seasons\" (\n  \"course_spot_id\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"season_id\" uuid NOT NULL,\n  \"spot_id\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"course_spot_seasons\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.course_spot_seasons.course_spot_seasons_course_spot_id_season_id_key",
+    "label": "Add unique constraint on \"course_spot_seasons\" (course_spot_id, season_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "course_spot_seasons_course_spot_id_season_id_key",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"course_spot_seasons_course_spot_id_season_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_course_spot_id_season_id_key",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"course_spot_seasons_course_spot_id_season_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"course_spot_seasons\" ADD CONSTRAINT \"course_spot_seasons_course_spot_id_season_id_key\" UNIQUE (\"course_spot_id\", \"season_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"course_spot_seasons_course_spot_id_season_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_course_spot_id_season_id_key",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.course_spot_seasons.course_spot_seasons_course_spot_id_idx_87a34496",
+    "label": "Create index \"course_spot_seasons_course_spot_id_idx_87a34496\" on \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "course_spot_seasons_course_spot_id_idx_87a34496",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"course_spot_seasons_course_spot_id_idx_87a34496\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons_course_spot_id_idx_87a34496\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"course_spot_seasons_course_spot_id_idx_87a34496\"",
+        "sql": "CREATE INDEX \"course_spot_seasons_course_spot_id_idx_87a34496\" ON \"public\".\"course_spot_seasons\" (\"course_spot_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"course_spot_seasons_course_spot_id_idx_87a34496\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons_course_spot_id_idx_87a34496\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.course_spot_seasons.course_spot_seasons_season_id_idx_b4a5a2c6",
+    "label": "Create index \"course_spot_seasons_season_id_idx_b4a5a2c6\" on \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "course_spot_seasons_season_id_idx_b4a5a2c6",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"course_spot_seasons_season_id_idx_b4a5a2c6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons_season_id_idx_b4a5a2c6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"course_spot_seasons_season_id_idx_b4a5a2c6\"",
+        "sql": "CREATE INDEX \"course_spot_seasons_season_id_idx_b4a5a2c6\" ON \"public\".\"course_spot_seasons\" (\"season_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"course_spot_seasons_season_id_idx_b4a5a2c6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons_season_id_idx_b4a5a2c6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.course_spot_seasons.course_spot_seasons_spot_id_idx_f74e1993",
+    "label": "Create index \"course_spot_seasons_spot_id_idx_f74e1993\" on \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "course_spot_seasons_spot_id_idx_f74e1993",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"course_spot_seasons_spot_id_idx_f74e1993\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons_spot_id_idx_f74e1993\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"course_spot_seasons_spot_id_idx_f74e1993\"",
+        "sql": "CREATE INDEX \"course_spot_seasons_spot_id_idx_f74e1993\" ON \"public\".\"course_spot_seasons\" (\"spot_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"course_spot_seasons_spot_id_idx_f74e1993\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"course_spot_seasons_spot_id_idx_f74e1993\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.course_spot_seasons.course_spot_seasons_course_spot_id_fkey",
+    "label": "Add foreign key \"course_spot_seasons_course_spot_id_fkey\" on \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "course_spot_seasons_course_spot_id_fkey",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"course_spot_seasons_course_spot_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_course_spot_id_fkey",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"course_spot_seasons_course_spot_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"course_spot_seasons\"\nADD CONSTRAINT \"course_spot_seasons_course_spot_id_fkey\"\nFOREIGN KEY (\"course_spot_id\")\nREFERENCES \"public\".\"course_spots\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"course_spot_seasons_course_spot_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_course_spot_id_fkey",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.course_spot_seasons.course_spot_seasons_season_id_fkey",
+    "label": "Add foreign key \"course_spot_seasons_season_id_fkey\" on \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "course_spot_seasons_season_id_fkey",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"course_spot_seasons_season_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_season_id_fkey",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"course_spot_seasons_season_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"course_spot_seasons\"\nADD CONSTRAINT \"course_spot_seasons_season_id_fkey\"\nFOREIGN KEY (\"season_id\")\nREFERENCES \"public\".\"seasons\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"course_spot_seasons_season_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_season_id_fkey",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.course_spot_seasons.course_spot_seasons_spot_id_fkey",
+    "label": "Add foreign key \"course_spot_seasons_spot_id_fkey\" on \"course_spot_seasons\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "course_spot_seasons_spot_id_fkey",
+        "table": "course_spot_seasons"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"course_spot_seasons_spot_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_spot_id_fkey",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"course_spot_seasons_spot_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"course_spot_seasons\"\nADD CONSTRAINT \"course_spot_seasons_spot_id_fkey\"\nFOREIGN KEY (\"spot_id\")\nREFERENCES \"public\".\"spots\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"course_spot_seasons_spot_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "course_spot_seasons_spot_id_fkey",
+          "public",
+          "\"public\".\"course_spot_seasons\""
+        ]
+      }
+    ]
+  }
+]

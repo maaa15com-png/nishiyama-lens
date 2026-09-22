@@ -4,8 +4,8 @@ import { getCourseDetail } from "./course-detail";
 import { getTodaysFinds } from "./todays-find";
 import { getNextAction } from "@/lib/recap/next-action";
 
-export async function getRecap(courseId: string) {
-  const course = await getCourseDetail(courseId);
+export async function getRecap(courseId: string, at = new Date()) {
+  const course = await getCourseDetail(courseId, at);
   if (!course) return null;
   const lens = await db.orm.public.Lens
     .where({ id: course.lensId, isPublished: true })
@@ -14,7 +14,7 @@ export async function getRecap(courseId: string) {
   if (!lens) return null;
 
   const spotIds = [...new Set(course.courseSpots.flatMap(({ spot }) => spot ? [spot.id] : []))];
-  const groups = await Promise.all(spotIds.map((id) => getTodaysFinds(id, lens.id)));
+  const groups = await Promise.all(spotIds.map((id) => getTodaysFinds(id, lens.id, at)));
   const finds = [...new Map(groups.flat().map((find) => [find.id, find])).values()];
   const action = getNextAction(lens.interest);
   const nextLens = await db.orm.public.Lens

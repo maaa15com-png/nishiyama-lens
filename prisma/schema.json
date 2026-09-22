@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "course_spot_seasons": {
+      "model": "CourseSpotSeason",
+      "namespace": "public"
+    },
     "course_spots": {
       "model": "CourseSpot",
       "namespace": "public"
@@ -500,6 +504,21 @@
                   "namespace": "public"
                 }
               },
+              "seasonalCandidates": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "courseSpotId"
+                  ]
+                },
+                "to": {
+                  "model": "CourseSpotSeason",
+                  "namespace": "public"
+                }
+              },
               "spot": {
                 "cardinality": "N:1",
                 "on": {
@@ -545,6 +564,103 @@
               },
               "namespaceId": "public",
               "table": "course_spots"
+            }
+          },
+          "CourseSpotSeason": {
+            "fields": {
+              "courseSpotId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "seasonId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "spotId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "courseSpot": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "courseSpotId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "CourseSpot",
+                  "namespace": "public"
+                }
+              },
+              "season": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "seasonId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Season",
+                  "namespace": "public"
+                }
+              },
+              "spot": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "spotId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Spot",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "courseSpotId": {
+                  "column": "course_spot_id"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "seasonId": {
+                  "column": "season_id"
+                },
+                "spotId": {
+                  "column": "spot_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "course_spot_seasons"
             }
           },
           "Event": {
@@ -1742,6 +1858,21 @@
               }
             },
             "relations": {
+              "courseSpotCandidates": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "seasonId"
+                  ]
+                },
+                "to": {
+                  "model": "CourseSpotSeason",
+                  "namespace": "public"
+                }
+              },
               "todaysFinds": {
                 "cardinality": "1:N",
                 "on": {
@@ -2017,6 +2148,21 @@
                 },
                 "to": {
                   "model": "RedPanda",
+                  "namespace": "public"
+                }
+              },
+              "seasonalCourseSlots": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "spotId"
+                  ]
+                },
+                "to": {
+                  "model": "CourseSpotSeason",
                   "namespace": "public"
                 }
               },
@@ -2333,6 +2479,119 @@
       "public": {
         "entries": {
           "table": {
+            "course_spot_seasons": {
+              "columns": {
+                "course_spot_id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "season_id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "spot_id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "course_spot_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "course_spot_seasons"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "course_spots"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "season_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "course_spot_seasons"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "seasons"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "spot_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "course_spot_seasons"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "spots"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "course_spot_id"
+                  ],
+                  "name": "course_spot_seasons_course_spot_id_idx_87a34496",
+                  "prefix": "course_spot_seasons_course_spot_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "season_id"
+                  ],
+                  "name": "course_spot_seasons_season_id_idx_b4a5a2c6",
+                  "prefix": "course_spot_seasons_season_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "spot_id"
+                  ],
+                  "name": "course_spot_seasons_spot_id_idx_f74e1993",
+                  "prefix": "course_spot_seasons_spot_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "course_spot_id",
+                    "season_id"
+                  ]
+                }
+              ]
+            },
             "course_spots": {
               "checks": [
                 {
@@ -3924,7 +4183,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2c5775f19def5aa838f687486538045c29c35b519f77d17ce934f6afba1b1a44"
+    "storageHash": "1ad7a57c44455864fb784b70f742c0d8e9937ff62dda7d5bf568fefea8d90998"
   },
   "execution": {
     "executionHash": "9b8dc33d96630e69d12d99f024fd55bf0d7d04bc7bd283eaf483cd3ad4147c41",

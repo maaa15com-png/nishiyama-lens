@@ -22,14 +22,15 @@ function sexLabel(value: string): string {
 }
 
 export default async function SpotPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<Query> }) {
+  const at = new Date();
   const { slug } = await params;
   const spot = await getSpotDetail(slug);
   if (!spot) notFound();
   const query = await searchParams;
   const { courseId } = query;
-  const candidate = typeof courseId === "string" ? await getCourseDetail(courseId) : null;
+  const candidate = typeof courseId === "string" ? await getCourseDetail(courseId, at) : null;
   const course = candidate?.courseSpots.some(({ spot: member }) => member?.id === spot.id) ? candidate : null;
-  const todaysFinds = await getTodaysFinds(spot.id, course?.lensId);
+  const todaysFinds = await getTodaysFinds(spot.id, course?.lensId, at);
   const amenities = [
     spot.strollerAccessible === true && "ベビーカーOK",
     spot.hasToilet === true && "トイレあり",
