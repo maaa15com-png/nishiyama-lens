@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import MapClient from "@/components/map/MapClient";
 import { spotCategoryLabels } from "@/lib/courses/labels";
+import { getParkFacilities } from "@/lib/server/park-facilities";
 import { getCourseMap } from "@/lib/server/course-map";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default async function MapPage({ searchParams }: {
   if (typeof courseId !== "string") notFound();
   const course = await getCourseMap(courseId);
   if (!course) notFound();
+  const facilities = await getParkFacilities();
 
   return (
     <>
@@ -26,7 +28,7 @@ export default async function MapPage({ searchParams }: {
       <h1 className="mt-3 break-words text-2xl font-medium leading-relaxed sm:text-3xl">{course.name}</h1>
       <p className="mt-3 text-sm leading-7 text-[#53665a]">番号のピンを押すと、スポット名と楽しみ方を確認できます。</p>
       <div className="mt-7">
-        <MapClient key={course.id} courseId={course.id} spots={course.spots} query={query} />
+        <MapClient key={course.id} courseId={course.id} spots={course.spots} facilities={facilities} query={query} />
       </div>
       <section aria-labelledby="map-spots-title" className="mt-8 rounded-3xl border border-[#e0e3d9] bg-[#fffdf8] p-5 sm:p-7">
         <h2 id="map-spots-title" className="text-lg font-semibold">地図に表示するスポット（{course.spots.length}件）</h2>

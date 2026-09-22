@@ -328,3 +328,30 @@ model CourseSpotSeason {
   @@index([spotId])
   @@map("course_spot_seasons")
 }
+
+// Visitor amenities are independent from Course/Spot and its numbering.
+enum FacilityType {
+  @@type("pg/text@1")
+  TOILET = "TOILET"
+  PARKING = "PARKING"
+}
+
+model ParkFacility {
+  id Uuid @id
+  name VarChar(150)
+  nameEn VarChar(150)? @map("name_en")
+  type FacilityType
+  latitude Numeric(9,6)
+  longitude Numeric(9,6)
+  description String?
+  descriptionEn String? @map("description_en")
+  externalUrl String? @map("external_url")
+  isPublished Boolean @default(true) @map("is_published")
+  createdAt Timestamptz(6) @default(now()) @map("created_at")
+  updatedAt temporal.updatedAt() @map("updated_at")
+
+  @@unique([name, type])
+  @@check(expression: "latitude BETWEEN -90 AND 90", name: "park_facilities_latitude_range")
+  @@check(expression: "longitude BETWEEN -180 AND 180", name: "park_facilities_longitude_range")
+  @@map("park_facilities")
+}

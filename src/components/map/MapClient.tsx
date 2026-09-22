@@ -8,17 +8,20 @@ import { spotCategoryLabels } from "@/lib/courses/labels";
 import type { MapSpot } from "@/lib/map/types";
 import { findNearestSpot, formatDistance } from "@/lib/map/nearest-spot";
 import { useCurrentLocation, locationMessages } from "./useCurrentLocation";
+import FacilityControls from "./FacilityControls";
+import type { MapFacility } from "@/lib/map/facilities";
 import styles from "./MapClient.module.css";
 
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN?.trim();
 
-export default function MapClient({ spots, courseId, query }: { spots: MapSpot[]; courseId: string; query: Query }) {
+export default function MapClient({ spots, facilities, courseId, query }: { spots: MapSpot[]; facilities: MapFacility[]; courseId: string; query: Query }) {
   const detailLinks = useRef<{ element: HTMLAnchorElement; href: string }[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const mapboxRef = useRef<typeof import("mapbox-gl/esm") | null>(null);
   const courseMarkersRef = useRef(new Map<number, Marker>());
   const [mapInstance, setMapInstance] = useState<MapboxMap | null>(null);
+  const [mapboxModule, setMapboxModule] = useState<typeof import("mapbox-gl/esm") | null>(null);
   const { state: location, requestLocation } = useCurrentLocation();
   const nearest = useMemo(() => location.position ? findNearestSpot(location.position, spots) : null, [location.position, spots]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -111,6 +114,7 @@ export default function MapClient({ spots, courseId, query }: { spots: MapSpot[]
         // Resizing must not reset a view chosen by the user or a GPS request.
         observer = new ResizeObserver(() => map.resize());
         observer.observe(containerRef.current);
+        setMapboxModule(mapbox);
         setMapInstance(map);
       } catch {
         if (!cancelled) setStatus("error");
@@ -181,10 +185,13 @@ export default function MapClient({ spots, courseId, query }: { spots: MapSpot[]
 
   if (!accessToken) {
     return (
+      <>
+      <FacilityControls facilities={facilities} spots={spots} map={null} mapbox={null} />
       <div role="status" className={styles.unavailable}>
         <p className="text-lg font-semibold">地図の設定がまだ完了していません</p>
         <p className="mt-3 text-sm leading-7">コース内のスポットは、下の一覧で確認できます。</p>
       </div>
+      </>
     );
   }
 
@@ -205,6 +212,7 @@ export default function MapClient({ spots, courseId, query }: { spots: MapSpot[]
         </div>
         <p id="location-status" role="status" className="mt-3 text-sm leading-7 text-[#53665a]">{locationMessages[location.status]}</p>
       </section>
+      <FacilityControls facilities={facilities} spots={spots} map={mapInstance} mapbox={mapboxModule} />
       <div className={styles.frame}>
         <div ref={containerRef} className={styles.map} role="region" aria-label="西山公園のコース地図" />
         {status === "loading" && <p role="status" className={styles.message}>地図を読み込んでいます…</p>}

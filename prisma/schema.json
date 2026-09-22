@@ -36,6 +36,10 @@
       "model": "News",
       "namespace": "public"
     },
+    "park_facilities": {
+      "model": "ParkFacility",
+      "namespace": "public"
+    },
     "red_pandas": {
       "model": "RedPanda",
       "namespace": "public"
@@ -125,6 +129,19 @@
               {
                 "name": "NONE",
                 "value": "NONE"
+              }
+            ]
+          },
+          "FacilityType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TOILET",
+                "value": "TOILET"
+              },
+              {
+                "name": "PARKING",
+                "value": "PARKING"
               }
             ]
           },
@@ -1497,6 +1514,160 @@
               },
               "namespaceId": "public",
               "table": "news"
+            }
+          },
+          "ParkFacility": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 6
+                  }
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "descriptionEn": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "externalUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "isPublished": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "latitude": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 9,
+                    "scale": 6
+                  }
+                }
+              },
+              "longitude": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 9,
+                    "scale": 6
+                  }
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/varchar@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 150
+                  }
+                }
+              },
+              "nameEn": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sql/varchar@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 150
+                  }
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "FacilityType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "descriptionEn": {
+                  "column": "description_en"
+                },
+                "externalUrl": {
+                  "column": "external_url"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isPublished": {
+                  "column": "is_published"
+                },
+                "latitude": {
+                  "column": "latitude"
+                },
+                "longitude": {
+                  "column": "longitude"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "nameEn": {
+                  "column": "name_en"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "updatedAt": {
+                  "column": "updated_at"
+                }
+              },
+              "namespaceId": "public",
+              "table": "park_facilities"
             }
           },
           "RedPanda": {
@@ -3437,6 +3608,133 @@
               },
               "uniques": []
             },
+            "park_facilities": {
+              "checks": [
+                {
+                  "expression": "latitude BETWEEN -90 AND 90",
+                  "name": "park_facilities_latitude_range_9dd11892",
+                  "prefix": "park_facilities_latitude_range"
+                },
+                {
+                  "expression": "longitude BETWEEN -180 AND 180",
+                  "name": "park_facilities_longitude_range_5fbf98d2",
+                  "prefix": "park_facilities_longitude_range"
+                },
+                {
+                  "expression": "\"type\" IN ('TOILET', 'PARKING')",
+                  "name": "park_facilities_type_check_fd738207",
+                  "prefix": "park_facilities_type_check"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 6
+                  }
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "description_en": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "external_url": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "is_published": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "latitude": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 9,
+                    "scale": 6
+                  }
+                },
+                "longitude": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 9,
+                    "scale": 6
+                  }
+                },
+                "name": {
+                  "codecId": "sql/varchar@1",
+                  "nativeType": "character varying",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 150
+                  }
+                },
+                "name_en": {
+                  "codecId": "sql/varchar@1",
+                  "nativeType": "character varying",
+                  "nullable": true,
+                  "typeParams": {
+                    "length": 150
+                  }
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "FacilityType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updated_at": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "name",
+                    "type"
+                  ]
+                }
+              ]
+            },
             "red_pandas": {
               "columns": {
                 "birth_date": {
@@ -4133,6 +4431,13 @@
                 "NONE"
               ]
             },
+            "FacilityType": {
+              "kind": "valueSet",
+              "values": [
+                "TOILET",
+                "PARKING"
+              ]
+            },
             "InterestType": {
               "kind": "valueSet",
               "values": [
@@ -4183,10 +4488,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "1ad7a57c44455864fb784b70f742c0d8e9937ff62dda7d5bf568fefea8d90998"
+    "storageHash": "2f90105fbf68abb60ae1bc2e2115654ce9f6f114c17909a455d352647ae21b1e"
   },
   "execution": {
-    "executionHash": "9b8dc33d96630e69d12d99f024fd55bf0d7d04bc7bd283eaf483cd3ad4147c41",
+    "executionHash": "cccbb3df66705f96b69202029c26a0cea7ad3b97337229d03c165cb0728fb9d1",
     "mutations": {
       "defaults": [
         {
@@ -4262,6 +4567,21 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "news"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "instantNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updated_at",
+            "namespace": "public",
+            "table": "park_facilities"
           }
         },
         {
