@@ -4,6 +4,7 @@ import { getCourseDetail } from "@/lib/server/course-detail";
 import FindCamera from "@/components/find/FindCamera";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { spotCategoryLabels } from "@/lib/courses/labels";
 import { getSpotDetail } from "@/lib/server/spot-detail";
@@ -35,6 +36,7 @@ export default async function SpotPage({ params, searchParams }: { params: Promi
     spot.hasRestArea === true && "休憩スペースあり",
   ].filter((label): label is string => typeof label === "string");
   const externalUrl = safeExternalUrl(spot.externalUrl);
+  const imageUrl = safeExternalUrl(spot.imageUrl);
 
   return <>
     <section aria-labelledby="spot-title" className="rounded-[2rem] bg-[#173e30] px-6 py-9 text-white sm:px-10 sm:py-12">
@@ -42,6 +44,7 @@ export default async function SpotPage({ params, searchParams }: { params: Promi
       <h1 id="spot-title" className="mt-5 break-words text-3xl font-medium leading-relaxed sm:text-4xl">{spot.name}</h1>
       <p className="mt-6 whitespace-pre-line break-words text-sm leading-8 text-white/85 sm:text-base">{spot.description}</p>
     </section>
+    {imageUrl && <Image src={imageUrl} alt={spot.name} width={500} height={333} unoptimized className="mt-8 h-auto w-full max-w-[500px] rounded-3xl" />}
     {todaysFinds.length > 0 && <section aria-labelledby="todays-find-title" className="mt-8 rounded-3xl border border-[#c8b781] bg-[#f0eddb] p-6 sm:p-8">
       <p className="text-xs font-bold tracking-[0.18em] text-[#62603b]">TODAY&apos;S FIND</p>
       <h2 id="todays-find-title" className="mt-2 text-2xl font-medium">今日の発見</h2>
