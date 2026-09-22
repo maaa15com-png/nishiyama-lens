@@ -10,7 +10,7 @@ export async function getSpotDetail(slug: string) {
 
   return db.orm.public.Spot
     .where({ slug: slug as Varchar<150>, isPublished: true })
-    .select("id", "name", "slug", "category", "description", "latitude", "longitude",
+    .select("id", "name", "slug", "category", "description", "imageUrl", "latitude", "longitude",
       "strollerAccessible", "hasToilet", "hasRestArea", "externalUrl", "isPublished")
     .include("redPandas", (pandas) => pandas
       .where({ isPublished: true })
