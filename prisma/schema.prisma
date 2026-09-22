@@ -116,6 +116,7 @@ model Course {
 }
 
 model CourseSpot {
+  seasonalCandidates CourseSpotSeason[]
   id                      Uuid          @id
   courseId                Uuid          @map("course_id")
   spotId                  Uuid          @map("spot_id")
@@ -135,6 +136,7 @@ model CourseSpot {
 }
 
 model Spot {
+  seasonalCourseSlots CourseSpotSeason[]
   id                 Uuid                 @id
   name               VarChar(150)
   nameEn             VarChar(150)?        @map("name_en")
@@ -164,6 +166,7 @@ model Spot {
 }
 
 model Season {
+  courseSpotCandidates CourseSpotSeason[]
   id            Uuid          @id
   name          VarChar(100)
   nameEn        VarChar(100)? @map("name_en")
@@ -308,4 +311,20 @@ model Event {
   updatedAt     temporal.updatedAt() @map("updated_at")
 
   @@map("events")
+}
+
+// A CourseSpot keeps its ordinary/fallback Spot; these rows explicitly select seasonal alternatives.
+model CourseSpotSeason {
+  id Uuid @id
+  courseSpotId Uuid @map("course_spot_id")
+  seasonId Uuid @map("season_id")
+  spotId Uuid @map("spot_id")
+  courseSpot CourseSpot @relation(fields:[courseSpotId], references:[id])
+  season Season @relation(fields:[seasonId], references:[id])
+  spot Spot @relation(fields:[spotId], references:[id])
+
+  @@unique([courseSpotId, seasonId])
+  @@index([seasonId])
+  @@index([spotId])
+  @@map("course_spot_seasons")
 }

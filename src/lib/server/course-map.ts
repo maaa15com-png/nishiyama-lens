@@ -2,8 +2,8 @@ import "server-only";
 import type { MapSpot } from "@/lib/map/types";
 import { getCourseDetail } from "./course-detail";
 
-export async function getCourseMap(courseId: string) {
-  const course = await getCourseDetail(courseId);
+export async function getCourseMap(courseId: string, at = new Date()) {
+  const course = await getCourseDetail(courseId, at);
   if (!course) return null;
 
   const spots: MapSpot[] = [];
