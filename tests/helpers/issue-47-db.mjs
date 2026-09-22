@@ -42,6 +42,11 @@ export function fixtureDatabase(initial = {}) {
         }));
       },
       async first() { return (await q.all())[0] ?? null; },
+      async update(patch) {
+        const found = rows[model].filter(row => filters.every(f => Object.entries(f).every(([k, v]) => row[k] === v)));
+        for (const row of found) Object.assign(row, structuredClone(patch));
+        return found.map(row => ({ ...row }));
+      },
       async create(row) {
         assert.ok(!rows[model].some(x => x.id === row.id), "duplicate UUID");
         rows[model].push(structuredClone(row)); return row;

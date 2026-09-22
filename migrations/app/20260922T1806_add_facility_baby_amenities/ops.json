@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.park_facilities.has_diaper_change",
+    "label": "Add column \"has_diaper_change\" to \"park_facilities\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "has_diaper_change",
+        "table": "park_facilities"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"has_diaper_change\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "park_facilities",
+          "has_diaper_change"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"has_diaper_change\"",
+        "sql": "ALTER TABLE \"public\".\"park_facilities\" ADD COLUMN \"has_diaper_change\" bool"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"has_diaper_change\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "park_facilities",
+          "has_diaper_change"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.park_facilities.has_nursing_room",
+    "label": "Add column \"has_nursing_room\" to \"park_facilities\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "has_nursing_room",
+        "table": "park_facilities"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"has_nursing_room\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "park_facilities",
+          "has_nursing_room"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"has_nursing_room\"",
+        "sql": "ALTER TABLE \"public\".\"park_facilities\" ADD COLUMN \"has_nursing_room\" bool"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"has_nursing_room\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "park_facilities",
+          "has_nursing_room"
+        ]
+      }
+    ]
+  }
+]

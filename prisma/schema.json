@@ -1549,6 +1549,20 @@
                   "kind": "scalar"
                 }
               },
+              "hasDiaperChange": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "hasNursingRoom": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -1640,6 +1654,12 @@
                 },
                 "externalUrl": {
                   "column": "external_url"
+                },
+                "hasDiaperChange": {
+                  "column": "has_diaper_change"
+                },
+                "hasNursingRoom": {
+                  "column": "has_nursing_room"
                 },
                 "id": {
                   "column": "id"
@@ -3654,6 +3674,16 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "has_diaper_change": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": true
+                },
+                "has_nursing_room": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -4488,7 +4518,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2f90105fbf68abb60ae1bc2e2115654ce9f6f114c17909a455d352647ae21b1e"
+    "storageHash": "83fb8fed4c22337ef315f1bb7c63efbaae17f2466ab799d3971340272d34fe03"
   },
   "execution": {
     "executionHash": "cccbb3df66705f96b69202029c26a0cea7ad3b97337229d03c165cb0728fb9d1",
