@@ -1,6 +1,17 @@
 // Fixed UUIDs. Official CSV evidence: docs/sources/issue-50-facilities.json.
 // Coordinates identify facilities, not entrances or accessible routes.
-export const parkFacilitySeeds = [
+// Verified equipment only; null means unknown, never "absent".
+export const babyFacilityEvidence: Record<string, { hasNursingRoom: true | null; hasDiaperChange: true; note: string }> = {
+  "96902ac7-2229-42d6-a55e-db58a0125caf": {
+    hasNursingRoom: true, hasDiaperChange: true,
+    note: "授乳室は1階飲食スペースにある館内設備です。トイレの24時間利用とは異なり、授乳室の利用時間は施設へご確認ください。施設内におむつ交換設備がありますが、詳細な設置場所は未確認です。",
+  },
+  "586282f7-ea81-4520-afd2-197f04073ba3": {
+    hasNursingRoom: null, hasDiaperChange: true,
+    note: "動物園の公式案内では、正門前と「レッサーパンダのいえ」館内に多目的トイレがあり、おむつ替えシートは計2台あります。各トイレへの台数の配分は未確認です。",
+  },
+};
+const baseFacilitySeeds = [
   {
     "id": "36d7f379-e387-4636-aa3c-12f9c64c7b3f",
     "name": "西山公園(中央広場)",
@@ -122,3 +133,11 @@ export const parkFacilitySeeds = [
     "isPublished": true
   }
 ] as const;
+
+export const parkFacilitySeeds = baseFacilitySeeds.map(seed => {
+  const evidence = babyFacilityEvidence[seed.id];
+  return { ...seed, hasNursingRoom: evidence?.hasNursingRoom ?? null,
+    hasDiaperChange: evidence?.hasDiaperChange ?? null,
+    description: seed.description + (evidence ? " " + evidence.note : ""),
+  };
+});

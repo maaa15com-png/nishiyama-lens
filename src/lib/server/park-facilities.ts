@@ -4,7 +4,7 @@ import { facilityExternalUrl, facilityTypes, type MapFacility } from "@/lib/map/
 
 export async function getParkFacilities(): Promise<MapFacility[]> {
   const rows = await db.orm.public.ParkFacility.where({ isPublished: true })
-    .select("id", "name", "type", "latitude", "longitude", "description", "externalUrl")
+    .select("id", "name", "type", "latitude", "longitude", "description", "externalUrl", "hasNursingRoom", "hasDiaperChange")
     .orderBy([(facility) => facility.type.asc(), (facility) => facility.name.asc()]).all();
   return rows.flatMap((row) => {
     const latitude = Number(row.latitude), longitude = Number(row.longitude);
