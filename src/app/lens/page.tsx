@@ -1,3 +1,4 @@
+import { getAvailableLensCombinations } from "@/lib/server/lens-availability";
 import type { Query } from "@/lib/language";
 import StandardHeader from "@/components/navigation/StandardHeader";
 import type { Metadata } from "next";
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 
 export default async function LensPage({ searchParams }: { searchParams: Promise<Query> }) {
   const query = await searchParams;
+  const combinations = await getAvailableLensCombinations();
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#f5f1e7] text-[#173e30]">
       <div
@@ -44,7 +46,7 @@ export default async function LensPage({ searchParams }: { searchParams: Promise
             </p>
           </div>
 
-          <LensDiagnosisClient query={query} />
+          <LensDiagnosisClient query={query} combinations={combinations} />
         </section>
       </main>
 

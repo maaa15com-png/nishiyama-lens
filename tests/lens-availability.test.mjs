@@ -1,0 +1,35 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import vm from "node:vm";
+import { createRequire } from "node:module";
+import ts from "typescript";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { fixtureDatabase, serverModules } from "./helpers/issue-47-db.mjs";
+
+const combinations = [ ["FAMILY","PANDA"],["FAMILY","SEASON"],["FAMILY","PLAY"],["COUPLE","SEASON"],["COUPLE","PHOTO"],["FRIENDS","PHOTO"],["SOLO","PHOTO"],["SOLO","RELAX"] ].map(([companion,interest])=>({companion,interest}));
+const rows=()=>({Lens:combinations.map((c,i)=>({...c,id:String(i),isPublished:true,name:c.companion+" × "+c.interest,description:"説明"})),Course:combinations.map((_,i)=>({id:"c"+i,lensId:String(i),isPublished:true,durationType:"MINUTES_30_60"}))});
+function setup(f=rows()){const db=fixtureDatabase(f),load=serverModules(db);return {db,get:load("src/lib/server/lens-availability.ts").getAvailableLensCombinations,result:load("src/lib/server/lens-recommendation.ts").getLensRecommendation};}
+const plain=value=>JSON.parse(JSON.stringify(value));
+test("availability reads eight published combinations in existing Companion and Interest order",async()=>{const f=rows();f.Lens.reverse();const {get,result}=setup(f);const available=await get();assert.deepEqual(plain(available),[...["PHOTO","RELAX"].map(interest=>({companion:"SOLO",interest})),{companion:"FRIENDS",interest:"PHOTO"},...["SEASON","PHOTO"].map(interest=>({companion:"COUPLE",interest})),...["PANDA","SEASON","PLAY"].map(interest=>({companion:"FAMILY",interest}))]);for(const item of available)assert.ok((await result(item)).recommendation.courses.length);});
+for(const [label,change]of [["hidden Lens",f=>f.Lens[0].isPublished=false],["no Course",f=>f.Course.shift()],["hidden Course",f=>f.Course[0].isPublished=false],["unsupported duration",f=>f.Course[0].durationType="HALF_DAY"],["legacy Companion",f=>f.Lens[0].companion="SMALL_CHILDREN"]])test("availability excludes "+label,async()=>{const f=rows();change(f);const available=await setup(f).get();assert.equal(available.length,7);assert.ok(!available.some(l=>l.interest==="PANDA"));});
+test("each supported duration works and hidden unsupported Course cannot suppress a valid Course",async()=>{for(const durationType of ["MINUTES_30_60","HOURS_1_2","HOURS_2_3"]){const f=rows();f.Course[0].durationType=durationType;f.Course.push({id:"extra",lensId:"0",durationType:"HALF_DAY",isPublished:false});assert.equal((await setup(f).get()).length,8);}});
+test("empty or failed availability query fails closed",async()=>{assert.equal((await setup({Lens:[],Course:[]}).get()).length,0);const old=console.error;console.error=()=>{};try{const get=serverModules({orm:{public:{Lens:{where(){throw Error("offline")}}}}})("src/lib/server/lens-availability.ts").getAvailableLensCombinations;assert.equal((await get()).length,0);}finally{console.error=old;}});
+
+// Execute the real Client component's event handlers with isolated hook state.
+function diagnosis(available=combinations){let cursor=0;const state=[],pushes=[],cache=new Map();const require=createRequire(import.meta.url);
+function load(file){const absolute=path.resolve(file);if(cache.has(absolute))return cache.get(absolute);const context={exports:{},URLSearchParams,require(name){
+if(name==="react")return {...React,useState(initial){const i=cursor++;if(!(i in state))state[i]=initial;return[state[i],value=>{state[i]=typeof value==="function"?value(state[i]):value}];}};
+if(name==="next/navigation")return {useRouter:()=>({push:href=>pushes.push(href)})};
+if(name.startsWith("@/")||name.startsWith(".")){const base=name.startsWith("@/")?path.resolve("src",name.slice(2)):path.resolve(path.dirname(absolute),name);return load([base+".ts",base+".tsx"].find(p=>fs.existsSync(p)));}return require(name);}};cache.set(absolute,context.exports);vm.runInNewContext(ts.transpileModule(fs.readFileSync(absolute,"utf8"),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText,context);return context.exports;}
+const component=load("src/components/lens/LensDiagnosisClient.tsx").LensDiagnosisClient;
+function render(){cursor=0;return component({query:{lang:"en",foo:["1","2"],duration:"HALF_DAY"},combinations:available});}
+function nodes(el){if(!el||typeof el!=="object")return[];if(Array.isArray(el))return el.flatMap(nodes);return [el,...nodes(el.props?.children)];}
+return{pushes,html:()=>renderToStaticMarkup(render()),options:()=>nodes(render()).filter(n=>n.props?.onChange),select(value){const option=nodes(render()).find(n=>n.props?.value===value&&n.props?.onChange);assert.ok(option);option.props.onChange();},button(label){return nodes(render()).find(n=>n.type==="button"&&nodes(n.props.children).length===0&&n.props.children===label)||nodes(render()).find(n=>n.type==="button"&&(Array.isArray(n.props.children)?n.props.children.includes(label):n.props.children===label));},next(){const button=nodes(render()).filter(n=>n.type==="button").at(-1);assert.ok(!button.props.disabled);button.props.onClick();},back(){nodes(render()).find(n=>n.type==="button"&&n.props.children==="戻る").props.onClick();}};
+}
+for(const [companion,interests]of [["SOLO",["PHOTO","RELAX"]],["FRIENDS",["PHOTO"]],["COUPLE",["SEASON","PHOTO"]],["FAMILY",["PANDA","SEASON","PLAY"]]])test("diagnosis shows only ordered available interests for "+companion,()=>{const ui=diagnosis();assert.deepEqual(ui.options().map(o=>o.props.value),["SOLO","FRIENDS","COUPLE","FAMILY"]);ui.select(companion);ui.next();assert.deepEqual(ui.options().map(o=>o.props.value),interests);assert.ok(ui.html().includes("今楽しめるLENS"));});
+test("back then Companion change clears incompatible Interest and blocks stale submission",()=>{const ui=diagnosis();ui.select("FAMILY");ui.next();ui.select("PANDA");ui.back();ui.select("COUPLE");ui.next();assert.ok(ui.options().every(o=>!o.props.checked));assert.equal(ui.button("結果を見る").props.disabled,true);ui.button("結果を見る").props.onClick();assert.equal(ui.pushes.length,0);ui.select("PHOTO");ui.next();const u=new URL(ui.pushes[0],"https://example.com");assert.equal(u.searchParams.get("companion"),"COUPLE");assert.equal(u.searchParams.get("interest"),"PHOTO");assert.equal(u.searchParams.get("lang"),"en");assert.deepEqual(u.searchParams.getAll("foo"),["1","2"]);assert.equal(u.searchParams.has("duration"),false);});
+test("compatible Interest is preserved on Companion change",()=>{const ui=diagnosis();ui.select("SOLO");ui.next();ui.select("PHOTO");ui.back();ui.select("COUPLE");ui.next();assert.equal(ui.options().find(o=>o.props.value==="PHOTO").props.checked,true);});
+test("zero-interest Companion is hidden; global zero renders no empty questions",()=>{const ui=diagnosis(combinations.filter(c=>c.companion!=="FRIENDS"));assert.ok(ui.options().every(o=>o.props.value!=="FRIENDS"));const empty=diagnosis([]).html();assert.match(empty,/role="status"/);assert.doesNotMatch(empty,/<fieldset|type="radio"|結果を見る/);});
