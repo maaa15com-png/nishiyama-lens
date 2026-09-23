@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { lensResultHref } from "@/lib/lens/result-href";
 import SpotImage from "@/components/spots/SpotImage";
-import { languageHref, localizedText, type Lang, type Query } from "@/lib/language";
+import { localizedText, type Lang, type Query } from "@/lib/language";
 import type { TodaysRecommendedLenses } from "@/lib/server/todays-recommended-lenses";
 
 // UI translations for the three supported calendar themes; not live status labels.
@@ -15,8 +16,6 @@ export default function TodaysLenses({ recommendation, lang, query }: {
 }) {
   if (!recommendation) return null;
   const { season, lenses, image } = recommendation;
-  const ctaQuery = { ...query };
-  delete ctaQuery.duration; // Legacy quiz answer; preserve all other context.
   const seasonName = localizedText(season.name, season.nameEn?.trim() || seasonNamesEn[season.slug] || null, lang);
   return <section aria-labelledby="todays-lenses-title" className="bg-[#edf0e7] px-5 py-16 text-[#173e30] sm:px-8 sm:py-24 lg:px-12">
     <div className="mx-auto max-w-6xl">
@@ -35,7 +34,7 @@ export default function TodaysLenses({ recommendation, lang, query }: {
             <p lang={description.lang} className="mt-4 whitespace-pre-line break-words text-sm leading-7 text-[#53665a]">{description.text}</p>
             {image && <SpotImage slug={image.slug} imageUrl={image.imagePath} name={season.name} lang={lang} />}
             <div className="mt-auto pt-7">
-              <Link href={languageHref("/lens/result", { ...ctaQuery, companion: lens.companion, interest: "SEASON" }, lang)} className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#174a36] px-6 py-3 text-center text-sm font-bold text-white hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174a36]">{lang === "en" ? "Explore this LENS" : "このLENSを見る"}</Link>
+              <Link href={lensResultHref({ companion: lens.companion, interest: "SEASON" }, query, lang)} className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#174a36] px-6 py-3 text-center text-sm font-bold text-white hover:bg-[#0f3929] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#174a36]">{lang === "en" ? "Explore this LENS" : "このLENSを見る"}</Link>
             </div>
           </article>;
         })}
