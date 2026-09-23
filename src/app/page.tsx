@@ -1,4 +1,6 @@
 import Link from "next/link";
+import TodaysLenses from "@/components/home/TodaysLenses";
+import { getTodaysRecommendedLenses } from "@/lib/server/todays-recommended-lenses";
 import GlobalHeader from "@/components/navigation/GlobalHeader";
 import { languageHref, parseLang, type Lang, type Query } from "@/lib/language";
 import type { ReactNode } from "react";
@@ -322,6 +324,7 @@ function Footer({ lang, query }: { lang: Lang; query: Query }) {
 export default async function Home({ searchParams }: { searchParams: Promise<Query> }) {
   const query = await searchParams;
   const lang = parseLang(query.lang);
+  const recommendation = await getTodaysRecommendedLenses();
   return (
     <>
       <GlobalHeader variant="overlay" path="/" key={languageHref("/", query, lang)} lang={lang} query={query} />
@@ -329,6 +332,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Que
         <Hero lang={lang} query={query} />
         <ParkHighlights lang={lang} />
         <LensIntroduction lang={lang} />
+        <TodaysLenses recommendation={recommendation} lang={lang} query={query} />
         <FamilyPandaExample lang={lang} />
         <FinalCta lang={lang} query={query} />
       </main>
