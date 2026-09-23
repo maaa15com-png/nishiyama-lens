@@ -72,11 +72,12 @@ const require=createRequire(import.meta.url);
 function loadUI(file, spots, recap, nearbyElement) {
   const context={exports:{},URL,URLSearchParams,require(name){
     if(name==="@/lib/server/nearby-spots")return{getNearbySpots:async()=>spots};
+    if(name==="@/lib/server/rediscovery-lenses")return{getRediscoveryLenses:async()=>[{id:"next-lens",name:"FAMILY × PLAY",description:"別の楽しみ方",companion:"FAMILY",interest:"PLAY"}]};
     if(name==="@/lib/server/recap")return{getRecap:async()=>recap};
     if(name==="@/components/nearby/NearbySpots")return{__esModule:true,default:()=>nearbyElement};
     if(name==="next/link")return{__esModule:true,default:props=>React.createElement("a",props)};
     if(name==="next/navigation")return{notFound:()=>{throw Error("NOT_FOUND")}};
-    if(name.startsWith("@/"))return loadUI("src/"+name.slice(2)+".ts",spots,recap,nearbyElement);
+    if(name.startsWith("@/"))return loadUI("src/"+name.slice(2)+(name.includes("components/")?".tsx":".ts"),spots,recap,nearbyElement);
     if(name.startsWith("."))return loadUI(path.resolve(path.dirname(file),name+".ts"),spots,recap,nearbyElement);
     return require(name);
   }};
@@ -99,4 +100,7 @@ test("Recap retains current Lens, Course, Find and contextual next action with o
   const html=renderToStaticMarkup(await page({searchParams:Promise.resolve({courseId:"keep",lang:"en",foo:["1","2"]})}));
   for(const text of ["FAMILY × PANDA","現在のCourse","今日の発見テーマ","既存の次のCTA","lang=en","foo=1&amp;foo=2"])assert.ok(html.includes(text));
   assert.equal((html.match(/id="nearby-title"/g)||[]).length,1);
+  assert.equal((html.match(/id="rediscovery-title"/g)||[]).length,1);
+  assert.ok(html.indexOf('id="nearby-title"') < html.indexOf('id="rediscovery-title"'));
+  assert.ok(html.includes("FAMILY × PLAY") && html.includes("interest=PLAY"));
 });

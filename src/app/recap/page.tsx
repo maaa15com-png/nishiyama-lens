@@ -1,4 +1,6 @@
 import { navigationHref, type Query } from "@/lib/language";
+import RediscoveryLenses from "@/components/recap/RediscoveryLenses";
+import { getRediscoveryLenses } from "@/lib/server/rediscovery-lenses";
 import NearbySpots from "@/components/nearby/NearbySpots";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -20,6 +22,7 @@ export default async function RecapPage({ searchParams }: {
   const recap = await getRecap(courseId);
   if (!recap) notFound();
   const { course, lens, finds, action } = recap;
+  const rediscovery = await getRediscoveryLenses(lens.id);
   return <>
     <p className="text-xs font-bold tracking-widest text-[#796345]">TODAY’S RECAP</p>
     <h1 className="mt-4 text-3xl font-medium leading-relaxed">今日選んだ、<br />西山公園の楽しみ方</h1>
@@ -52,5 +55,6 @@ export default async function RecapPage({ searchParams }: {
       {action.needsDiagnosis && <p className="mt-3 text-sm leading-7 text-[#53665a]">次のテーマをヒントに、もう一度LENS診断から探してみましょう。</p>}
     </nav>
     <NearbySpots lensId={lens.id} />
+    <RediscoveryLenses lenses={rediscovery} query={query} />
   </>;
 }
