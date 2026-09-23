@@ -1,3 +1,4 @@
+import { isSelectableDuration } from "@/lib/lens/availability";
 import "server-only";
 import { db } from "./db";
 import { durationTypes, isLensRecommendationInput, type LensRecommendationInput, type LensRecommendationResponse } from "@/lib/lens/types";
@@ -23,7 +24,7 @@ async function getLensCourses(lensId: string) {
     .select("id", "name", "description", "durationType", "durationMinutes")
     .orderBy((course) => course.id.asc()).all();
   return durationTypes.flatMap((durationType) => rows
-    .filter((course) => course.durationType === durationType)
+    .filter((course) => isSelectableDuration(course.durationType) && course.durationType === durationType)
     .map((course) => ({ id: course.id, name: String(course.name), description: course.description,
       durationType, durationMinutes: course.durationMinutes })));
 }

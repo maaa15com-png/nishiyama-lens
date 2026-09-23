@@ -1,6 +1,7 @@
+import { hasSelectableCourse } from "@/lib/lens/availability";
 import "server-only";
 import { db } from "./db";
-import { companionTypes, interestTypes, durationTypes, isLensRecommendationInput } from "@/lib/lens/types";
+import { companionTypes, interestTypes, isLensRecommendationInput } from "@/lib/lens/types";
 
 export async function getRediscoveryLenses(currentLensId: string) {
   const rows = await db.orm.public.Lens.where({ isPublished: true })
@@ -11,7 +12,7 @@ export async function getRediscoveryLenses(currentLensId: string) {
   if (!current || !isLensRecommendationInput(current)) return [];
   const eligible = rows.flatMap(lens => {
     if (lens.id === currentLensId || !isLensRecommendationInput(lens)
-      || !lens.courses.some(course => durationTypes.some(duration => course.durationType === duration))) return [];
+      || !hasSelectableCourse(lens.courses)) return [];
     return [{ id: lens.id, name: String(lens.name), description: lens.description,
       companion: lens.companion, interest: lens.interest }];
   });

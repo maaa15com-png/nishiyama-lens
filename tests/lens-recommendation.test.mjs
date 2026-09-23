@@ -1,3 +1,4 @@
+import { fixtureDatabase, serverModules } from "./helpers/issue-47-db.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -22,6 +23,7 @@ function setup(lensRows = lenses, courseRows = courses) {
   } });
   const context = { exports: {}, require(name) {
     if (name === "server-only") return {};
+    if (name === "@/lib/lens/availability") return serverModules(fixtureDatabase())("src/lib/lens/availability.ts");
     if (name === "@/lib/lens/types") return types;
     assert.equal(name, "./db");
     return { db: { orm: { public: { Lens: model(lensRows), Course: model(courseRows) } } } };

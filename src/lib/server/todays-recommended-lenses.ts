@@ -1,8 +1,8 @@
+import { hasSelectableCourse } from "@/lib/lens/availability";
 import "server-only";
 import { db } from "./db";
 import type { Varchar } from "@prisma/orm-postgres/target/codec-types";
 import { isSeasonActive } from "@/lib/seasons/period";
-import { durationTypes } from "@/lib/lens/types";
 import { getSpotImage } from "@/lib/media/spot-image";
 
 const seasonSpots: Record<string, string> = {
@@ -30,7 +30,7 @@ export async function getTodaysRecommendedLenses(at = new Date()) {
       if (matches.length !== 1) return [];
       const lens = matches[0];
       // Same selectable durations as the existing Result page.
-      if (!lens.courses.some((course) => durationTypes.some((duration) => duration === course.durationType))) return [];
+      if (!hasSelectableCourse(lens.courses)) return [];
       return [{ id: lens.id, name: String(lens.name), description: lens.description,
         descriptionEn: lens.descriptionEn, companion }];
     });

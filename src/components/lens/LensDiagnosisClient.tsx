@@ -1,6 +1,9 @@
 "use client";
 
-import { navigationHref, type Query } from "@/lib/language";
+import { type Query } from "@/lib/language";
+
+import { availableAnswers } from "@/lib/lens/availability";
+import { lensResultHref } from "@/lib/lens/result-href";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,23 +17,24 @@ import type {
 
 const totalSteps = lensQuestions.length;
 
-export function LensDiagnosisClient({ query }: { query: Query }) {
+export function LensDiagnosisClient({ query, combinations }: { query: Query; combinations: LensRecommendationInput[] }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<LensAnswers>({});
+  const [storedAnswers, setAnswers] = useState<LensAnswers>({});
   const [completionMessage, setCompletionMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const answers = availableAnswers(storedAnswers, combinations);
   const question = lensQuestions[step];
+  const options = question.options.filter(option => combinations.some(item => question.key === "companion"
+    ? item.companion === option.value
+    : item.companion === answers.companion && item.interest === option.value));
   const selectedValue = answers[question.key];
   const isLastStep = step === totalSteps - 1;
-  const canContinue = selectedValue !== undefined;
+  const canContinue = options.some(option => option.value === selectedValue);
 
   function selectAnswer(value: LensAnswerValue) {
-    setAnswers((currentAnswers) => ({
-      ...currentAnswers,
-      [question.key]: value,
-    }));
+    setAnswers(currentAnswers => availableAnswers({ ...currentAnswers, [question.key]: value }, combinations));
     setCompletionMessage(null);
   }
 
@@ -56,12 +60,12 @@ export function LensDiagnosisClient({ query }: { query: Query }) {
 
     setIsSubmitting(true);
     setCompletionMessage(null);
-    const searchParams = new URLSearchParams({
-      companion: answers.companion,
-      interest: answers.interest,
-    });
-    router.push(navigationHref(`/lens/result?${searchParams.toString()}`, query));
+    router.push(lensResultHref(answers, query));
   }
+
+  if (!combinations.length) return <div role="status" className="mt-9 rounded-3xl border border-[#e2e4da] bg-[#fffdf8] p-6 text-sm leading-8">
+    現在選べるLENSを確認できませんでした。時間をおいて、もう一度お試しください。
+  </div>;
 
   return (
     <div className="mt-9 overflow-hidden rounded-[1.75rem] border border-[#e2e4da] bg-[#fffdf8] shadow-[0_24px_70px_rgba(35,62,47,0.1)] sm:mt-12 sm:rounded-[2rem]">
@@ -84,9 +88,10 @@ export function LensDiagnosisClient({ query }: { query: Query }) {
             className="mt-3 text-sm leading-7 text-[#68736c]"
           >
             {question.hint}
+            {step === 1 && <span className="mt-2 block">一緒に過ごす人に合わせて、今楽しめるLENSから選べます。</span>}
           </p>
           <div className="mt-7 grid gap-3 sm:mt-9 sm:grid-cols-2 sm:gap-4">
-            {question.options.map((option) => (
+            {options.map((option) => (
               <LensOptionCard
                 key={option.value}
                 id={`lens-${question.key}-${option.value.toLowerCase().replaceAll("_", "-")}`}
