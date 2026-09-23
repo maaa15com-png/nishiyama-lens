@@ -21,5 +21,5 @@ export async function getNearbySpots(lensId: string) {
     ...nearbySpot,
     externalUrl: safeExternalUrl(nearbySpot.externalUrl),
     recommendationReason,
-  }] : []);
+  }] : []).slice(0, 3); // Limit after filtering hidden/missing destinations.
 }
