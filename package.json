@@ -13,7 +13,8 @@
     "db:seed:official-nearby-spots": "node prisma/seed-official-nearby-spots.mts",
     "db:seed:issue-47": "node prisma/seed-issue-47.mts",
     "db:seed:park-facilities": "node prisma/seed-park-facilities.mts",
-    "db:seed:spot-images": "node prisma/seed-spot-images.mts"
+    "db:seed:spot-images": "node prisma/seed-spot-images.mts",
+    "db:seed:issue-52": "node prisma/seed-issue-52.mts"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",
