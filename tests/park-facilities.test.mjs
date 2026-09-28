@@ -7,7 +7,7 @@ import { fixtureDatabase, serverModules } from "./helpers/issue-47-db.mjs";
 const plain = value => JSON.parse(JSON.stringify(value));
 
 test("facility seed matches official named coordinates, unique stable UUIDs and types", () => {
-  const evidence = JSON.parse(fs.readFileSync(new URL("../docs/sources/issue-50-facilities.json", import.meta.url), "utf8"));
+  const evidence = JSON.parse(fs.readFileSync(new URL("../docs/sources/park-facilities.json", import.meta.url), "utf8"));
   const source = evidence.flatMap(e => e.rows);
   assert.equal(parkFacilitySeeds.length,10);
   assert.equal(new Set(parkFacilitySeeds.map(f=>f.id)).size,10);
