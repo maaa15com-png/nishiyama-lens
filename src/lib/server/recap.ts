@@ -26,7 +26,8 @@ export async function getRecap(courseId: string, at = new Date()) {
     .first();
   const nextCourse = nextLens?.courses.find((candidate) => candidate.durationType === course.durationType)
     ?? nextLens?.courses[0];
-  return { course, lens, finds, action: {
+  const findSpotIds = Object.fromEntries(groups.flatMap((group, index) => group.map(find => [find.id, spotIds[index]])));
+  return { course, lens, finds, findSpotIds, action: {
     ...action,
     href: nextCourse ? `/courses/${nextCourse.id}` : "/lens",
     needsDiagnosis: !nextCourse,

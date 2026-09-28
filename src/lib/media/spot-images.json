@@ -21,7 +21,10 @@
     "originalHeight": 2432,
     "originalSha256": "29a3527e69f93b245d0761972e18cab250c06349905418b384b8b3ae46a8051a",
     "sha256": "21ada517717cdc2ece07fac0ac9ee174d3e9b080235602fdea48e0a836d93587",
-    "representativeNotice": "代表イメージです。現在の開花・紅葉状況を示すものではありません。"
+    "representativeNotice": "代表イメージです。現在の開花・紅葉状況を示すものではありません。",
+    "hero": {
+      "objectPosition": "50% 50%"
+    }
   },
   {
     "spotId": "edd5befa-d48b-4f8e-992d-df26e7b5b281",
@@ -45,7 +48,10 @@
     "originalHeight": 2880,
     "originalSha256": "fa6ce8188c374ad2f47b99fcfabe5e21695aaa5e2249657b29bfb7d9fd099da4",
     "sha256": "f6a14e1ae3cd97733c8b3d2812637e9fd78bb37a16e4465c396805a80906219a",
-    "representativeNotice": "代表イメージです。現在の開花・紅葉状況を示すものではありません。"
+    "representativeNotice": "代表イメージです。現在の開花・紅葉状況を示すものではありません。",
+    "hero": {
+      "objectPosition": "50% 50%"
+    }
   },
   {
     "spotId": "39ad31f0-58be-40d6-90c9-ea52e1a84b7d",
@@ -75,6 +81,9 @@
     "subject": "アケビ（公式データセット名・説明・内部ファイル名による）",
     "subjectSourceUrl": "https://www.city.sabae.fukui.jp/nishiyama_zoo/panda/redpanda_akebi.html",
     "captureLocation": null,
-    "representativeNotice": "西山動物園の代表イメージです。現在の展示状況を示すものではありません。"
+    "representativeNotice": "西山動物園の代表イメージです。現在の展示状況を示すものではありません。",
+    "hero": {
+      "objectPosition": "55% 40%"
+    }
   }
 ]

@@ -1,0 +1,117 @@
+[
+  {
+    "slug": "generated-panda-bamboo",
+    "imagePath": "/images/spots/generated-panda-bamboo.jpg",
+    "width": 1448,
+    "height": 1086,
+    "kind": "generated",
+    "title": "竹の葉を味わうレッサーパンダ",
+    "alt": "竹の葉を食べるレッサーパンダの生成イメージ",
+    "attribution": "ユーザー提供のAI生成画像",
+    "sourceFile": "Codex 画像 2026年9月24日 15_10_59.png",
+    "sourceUrl": null,
+    "license": null,
+    "licenseUrl": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG圧縮（品質85）、トリミングなし",
+    "originalWidth": 1448,
+    "originalHeight": 1086,
+    "originalSha256": "eed04fc5286d7e21f15bde5a63829e0d26856ffe348902d062a39b3c20cba50a",
+    "sha256": "d3746a82e941cb2665efdbbf720f7a15c018c113b4ed0e7a5aa3f3fa8700d730",
+    "representativeNotice": "生成イメージです。西山公園の実際の施設・風景・個体を撮影した写真ではありません。",
+    "hero": {
+      "objectPosition": "50% 50%"
+    }
+  },
+  {
+    "slug": "generated-panda-walking",
+    "imagePath": "/images/spots/generated-panda-walking.jpg",
+    "width": 1600,
+    "height": 900,
+    "kind": "generated",
+    "title": "緑の森を歩くレッサーパンダ",
+    "alt": "木の上を歩くレッサーパンダの生成イメージ",
+    "attribution": "ユーザー提供のAI生成画像",
+    "sourceFile": "Codex 画像 2026年9月24日 15_11_05.png",
+    "sourceUrl": null,
+    "license": null,
+    "licenseUrl": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG圧縮（品質85）、トリミングなし",
+    "originalWidth": 1672,
+    "originalHeight": 941,
+    "originalSha256": "86f64fa06f6adc91842f5caebe3aa52b45d911028d477ac4744bd93f0f2431eb",
+    "sha256": "9e39ab510361c4ffe8c31fa5689216bf067ba3f3a8eeb656a7a43f2cc75b2a89",
+    "representativeNotice": "生成イメージです。西山公園の実際の施設・風景・個体を撮影した写真ではありません。",
+    "hero": {
+      "objectPosition": "65% 45%"
+    }
+  },
+  {
+    "slug": "generated-panda-sunlight",
+    "imagePath": "/images/spots/generated-panda-sunlight.jpg",
+    "width": 1600,
+    "height": 900,
+    "kind": "generated",
+    "title": "木漏れ日のレッサーパンダ",
+    "alt": "木漏れ日の中で枝に立つレッサーパンダの生成イメージ",
+    "attribution": "ユーザー提供のAI生成画像",
+    "sourceFile": "Codex 画像 2026年9月24日 15_10_47.png",
+    "sourceUrl": null,
+    "license": null,
+    "licenseUrl": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG圧縮（品質85）、トリミングなし",
+    "originalWidth": 1672,
+    "originalHeight": 941,
+    "originalSha256": "173299ce444abb00f6f5b1948cc951af4991f3ecbded3e551358a8d096e80f1d",
+    "sha256": "8b2a809cf26d7a73cdfebcf1ed772c1e089bf7dddab0159bc4ddf52c887f59c1",
+    "representativeNotice": "生成イメージです。西山公園の実際の施設・風景・個体を撮影した写真ではありません。",
+    "hero": {
+      "objectPosition": "30% 40%"
+    }
+  },
+  {
+    "slug": "generated-woodland-playground",
+    "imagePath": "/images/spots/generated-woodland-playground.jpg",
+    "width": 1448,
+    "height": 1086,
+    "kind": "generated",
+    "title": "森の冒険遊び場で遊ぶ子どもたち",
+    "alt": "森の木製遊具で遊ぶ子どもたちの生成イメージ",
+    "attribution": "ユーザー提供のAI生成画像",
+    "sourceFile": "Codex 画像 2026年9月24日 15_10_37.png",
+    "sourceUrl": null,
+    "license": null,
+    "licenseUrl": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG圧縮（品質85）、トリミングなし",
+    "originalWidth": 1448,
+    "originalHeight": 1086,
+    "originalSha256": "9e290b2dcae83b2a34f216ab74dc1decd8cafc691b5f0bc1a8a4a156f71736bc",
+    "sha256": "2a1c7c09b93664820b124faad73e37cda41245bf4ad364d683213d9768edbf1c",
+    "representativeNotice": "生成イメージです。西山公園の実際の施設・風景・個体を撮影した写真ではありません。",
+    "hero": {
+      "objectPosition": "50% 50%"
+    }
+  },
+  {
+    "slug": "generated-green-path",
+    "imagePath": "/images/spots/generated-green-path.jpg",
+    "width": 1448,
+    "height": 1086,
+    "kind": "generated",
+    "title": "木漏れ日の緑豊かな小径",
+    "alt": "木漏れ日が差す緑の小径の生成イメージ",
+    "attribution": "ユーザー提供のAI生成画像",
+    "sourceFile": "Codex 画像 2026年9月24日 15_09_42-2.png",
+    "sourceUrl": null,
+    "license": null,
+    "licenseUrl": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG圧縮（品質85）、トリミングなし",
+    "originalWidth": 1448,
+    "originalHeight": 1086,
+    "originalSha256": "a385daa51673e2c5546e57afc750812e1c29fae5a13b0a749512faf8bdbde7ea",
+    "sha256": "a58265ea1c53554cdafb3bfbd6e4210cc33db9c0c064de335500ee8f2da57411",
+    "representativeNotice": "生成イメージです。西山公園の実際の施設・風景・個体を撮影した写真ではありません。",
+    "hero": {
+      "objectPosition": "60% 50%"
+    }
+  }
+]

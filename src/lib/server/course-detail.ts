@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "./db";
 import { resolveCourseSpots } from "./resolve-course-spots";
 
-const spotFields = ["id", "name", "slug", "category", "description", "latitude", "longitude", "strollerAccessible", "hasToilet", "hasRestArea"] as const;
+const spotFields = ["id", "name", "slug", "category", "description", "imageUrl", "latitude", "longitude", "strollerAccessible", "hasToilet", "hasRestArea"] as const;
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -33,4 +33,9 @@ export async function getCourseDetail(courseId: string, at = new Date()) {
     ...course,
     courseSpots: resolveCourseSpots(course.courseSpots, at),
   };
+}
+
+export async function getCourseLens(lensId: string) {
+  return db.orm.public.Lens.where({ id: lensId, isPublished: true })
+    .select("name", "description").first();
 }

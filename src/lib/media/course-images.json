@@ -1,0 +1,32 @@
+[
+  {
+    "slug": "adventure-forest",
+    "imagePath": "/images/courses/adventure-forest-image.jpg",
+    "kind": "generated",
+    "alt": "森の中の木製遊具で遊ぶ子どもたちの生成イメージ",
+    "width": 1448,
+    "height": 1086,
+    "objectPosition": "50% 50%",
+    "sourceFile": "Codex 画像 2026年9月27日 15_56_49-1.png",
+    "source": "user-provided",
+    "license": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG品質85、トリミングなし",
+    "originalSha256": "9e290b2dcae83b2a34f216ab74dc1decd8cafc691b5f0bc1a8a4a156f71736bc",
+    "sha256": "2a1c7c09b93664820b124faad73e37cda41245bf4ad364d683213d9768edbf1c"
+  },
+  {
+    "slug": "michi-no-eki-nishiyama",
+    "imagePath": "/images/courses/michinoeki-nishiyama-image.jpg",
+    "kind": "generated",
+    "alt": "山を背景にした道の駅西山公園の建物の生成イメージ",
+    "width": 1448,
+    "height": 1086,
+    "objectPosition": "50% 50%",
+    "sourceFile": "exec-5865bef0-c490-47c6-b7e3-3da67ac56324.png",
+    "source": "built-in image_gen",
+    "license": null,
+    "modification": "長辺1600px以下・拡大なし、JPEG品質85、トリミングなし",
+    "originalSha256": "c5b81299e2bb3d53cdfee6d1d171a36f7e716f2b7a9bcc63ac879355170f6acb",
+    "sha256": "6f62888ee97a4d8c8eb477d13e89ad6a7ecaacc82906013c92abb6a0494aceac"
+  }
+]
