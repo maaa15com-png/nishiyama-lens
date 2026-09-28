@@ -3,7 +3,7 @@ import type { Numeric, Varchar } from "@prisma/orm-postgres/target/codec-types";
 import type { Contract } from "./schema.d.ts";
 
 // Reviewed 2026-09-23. Fixed UUIDs must never be regenerated on reruns.
-// Approved source values and access restrictions: docs/issue-48-nearby-spots.md.
+// Approved source values and access restrictions.
 export const officialNearbySpotSeeds = [
   {
     "id": "97f6f7de-4b22-4df4-a50f-c9839df231f1",

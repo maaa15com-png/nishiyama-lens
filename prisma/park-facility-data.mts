@@ -1,4 +1,4 @@
-// Fixed UUIDs. Official CSV evidence: docs/sources/issue-50-facilities.json.
+// Fixed UUIDs. Official CSV evidence: docs/sources/park-facilities.json.
 // Coordinates identify facilities, not entrances or accessible routes.
 // Verified equipment only; null means unknown, never "absent".
 export const babyFacilityEvidence: Record<string, { hasNursingRoom: true | null; hasDiaperChange: true; note: string }> = {

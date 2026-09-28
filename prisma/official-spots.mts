@@ -2,7 +2,7 @@ import type postgres from "@prisma/orm-postgres/runtime";
 import type { Numeric, Varchar } from "@prisma/orm-postgres/target/codec-types";
 import type { Contract } from "./schema.d.ts";
 
-// Reviewed 2026-09-22. Evidence and deferred candidates: docs/issue-48-spots.md.
+// Reviewed 2026-09-22. Evidence and deferred candidates.
 // Fixed IDs belong to this seed; never regenerate them on reruns.
 const facilities = "https://www.city.sabae.fukui.jp/kurashi_tetsuduki/doro_kasen_koen/koen/nishiyama/";
 export const officialSpotSeeds = [
