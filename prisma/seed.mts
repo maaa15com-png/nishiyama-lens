@@ -24,6 +24,10 @@ if (!databaseUrl) {
 
 const db = postgres<Contract>({ contractJson, url: databaseUrl });
 
+// Later image and NearbySpot relation seeds reference these IDs on a fresh database.
+const NISHIYAMA_ZOO_SPOT_ID = "39ad31f0-58be-40d6-90c9-ea52e1a84b7d";
+const SABAE_MANABE_MUSEUM_NEARBY_SPOT_ID = "b23c8a02-a9d9-45b7-be8e-6d358a52a412";
+
 const spotSeeds = [
   {
     name: varchar150("西山動物園"),
@@ -462,7 +466,7 @@ async function seed() {
 
     for (const spotSeed of spotSeeds) {
       const spot = await tx.orm.public.Spot.upsert({
-        create: { id: randomUUID(), ...spotSeed },
+        create: { id: spotSeed.slug === "nishiyama-zoo" ? NISHIYAMA_ZOO_SPOT_ID : randomUUID(), ...spotSeed },
         update: spotSeed,
         conflictOn: { slug: spotSeed.slug },
       });
@@ -656,7 +660,7 @@ async function seed() {
 
     const nearbySpot = await tx.orm.public.NearbySpot.upsert({
       create: {
-        id: randomUUID(),
+        id: SABAE_MANABE_MUSEUM_NEARBY_SPOT_ID,
         name: varchar150("鯖江市まなべの館"),
         nameEn: varchar150("Sabae City Manabe Museum"),
         slug: varchar150("sabae-manabe-museum"),
