@@ -1,3 +1,7 @@
+import HomePhoto from "@/components/home/HomePhoto";
+import HomePhotoCredits from "@/components/home/HomePhotoCredits";
+import { getHomePhoto } from "@/lib/media/home-photos";
+import { HeroImage, HeroImageCredits } from "@/components/home/HeroImage";
 import Link from "next/link";
 import TodaysLenses from "@/components/home/TodaysLenses";
 import { getTodaysRecommendedLenses } from "@/lib/server/todays-recommended-lenses";
@@ -15,6 +19,7 @@ const highlights = (lang: Lang) => [
     description: lang === "en" ? "Share a moment with the adorable red pandas." : "愛らしいレッサーパンダと、目線が合うひととき。",
     className: styles.featureZoo,
     icon: <PandaIcon />,
+    photo: getHomePhoto("animals"),
   },
   {
     number: "02",
@@ -22,6 +27,7 @@ const highlights = (lang: Lang) => [
     description: lang === "en" ? "Spring azaleas and autumn leaves. New colors on every visit." : "春のつつじ、秋の紅葉。訪れるたびに違う色。",
     className: styles.featureSeason,
     icon: <LeafIcon />,
+    photo: getHomePhoto("seasons"),
   },
   {
     number: "03",
@@ -29,6 +35,7 @@ const highlights = (lang: Lang) => [
     description: lang === "en" ? "Explore the woodland playground and make family memories." : "森の遊具を駆けめぐって、家族の思い出を。",
     className: styles.featurePlay,
     icon: <PlayIcon />,
+    photo: getHomePhoto("play"),
   },
   {
     number: "04",
@@ -36,6 +43,7 @@ const highlights = (lang: Lang) => [
     description: lang === "en" ? "Wander sunlit paths at your own pace." : "木漏れ日の小径を、気の向くままに散策。",
     className: styles.featureWalk,
     icon: <WalkIcon />,
+    photo: getHomePhoto("walk"),
   },
 ] as const;
 
@@ -78,6 +86,7 @@ function Hero({ lang, query }: HomeProps) {
         <div className={`${styles.heroTree} ${styles.heroTreeThree}`} />
         <div className={styles.heroPath} />
       </div>
+      <HeroImage />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,35,25,0.38)_0%,rgba(8,35,25,0.08)_35%,rgba(8,35,25,0.78)_100%)]" />
 
       <div className="relative z-10 mx-auto flex min-h-[45rem] max-w-7xl items-end px-5 pb-14 pt-36 sm:min-h-[50rem] sm:px-8 sm:pb-20 lg:min-h-[54rem] lg:px-12 lg:pb-24">
@@ -138,17 +147,18 @@ function FeatureCard({
   description,
   className,
   icon,
+  photo,
 }: ReturnType<typeof highlights>[number]) {
   return (
     <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_20px_55px_rgba(40,55,42,0.08)]">
       <div
         className={`${styles.featureScene} relative aspect-[4/3] overflow-hidden ${className}`}
-        aria-hidden="true"
       >
-        <span className="absolute left-5 top-5 text-xs font-bold tracking-[0.18em] text-white/75">
+        {photo && <HomePhoto photo={photo} sizes="(min-width: 1376px) 305px, (min-width: 1024px) calc((100vw - 156px) / 4), (min-width: 640px) calc((100vw - 84px) / 2), calc(100vw - 40px)" />}
+        <span aria-hidden="true" className="absolute left-5 top-5 z-10 rounded-full bg-[#173e30]/70 px-2 py-1 text-xs font-bold tracking-[0.18em] text-white">
           {number}
         </span>
-        <div className="absolute inset-0 grid place-items-center transition-transform duration-500 group-hover:scale-105">
+        <div aria-hidden="true" className="absolute inset-0 grid place-items-center transition-transform duration-500 group-hover:scale-105">
           <span className="grid size-20 place-items-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-sm">
             {icon}
           </span>
@@ -182,6 +192,7 @@ function ParkHighlights({ lang }: Pick<HomeProps, "lang">) {
             <FeatureCard key={highlight.number} {...highlight} />
           ))}
         </div>
+        <HomePhotoCredits placements={["animals", "seasons", "play", "walk"]} lang={lang} />
       </div>
     </section>
   );
@@ -234,6 +245,7 @@ function LensIntroduction({ lang }: Pick<HomeProps, "lang">) {
 }
 
 function FamilyPandaExample({ lang }: Pick<HomeProps, "lang">) {
+  const photo = getHomePhoto("familyPanda");
   return (
     <section className="bg-[#fffdf8] px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12 lg:pb-36">
       <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] bg-[#183f31] text-white shadow-[0_28px_80px_rgba(21,58,44,0.18)] lg:grid-cols-[0.95fr_1.05fr] lg:rounded-[2.5rem]">
@@ -257,22 +269,25 @@ function FamilyPandaExample({ lang }: Pick<HomeProps, "lang">) {
           </div>
         </div>
 
-        <div className={`${styles.pandaScene} relative min-h-80 overflow-hidden lg:min-h-[38rem]`} aria-hidden="true">
-          <div className={styles.pandaBranch} />
-          <div className={styles.pandaMark}>
+        <div className={`${styles.pandaScene} relative min-h-80 overflow-hidden lg:min-h-[38rem]`}>
+          {photo && <HomePhoto photo={photo} sizes="(min-width: 1376px) 672px, (min-width: 1024px) calc((100vw - 96px) * 0.525), (min-width: 640px) calc(100vw - 64px), calc(100vw - 40px)" />}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-[#183f31]/40 to-transparent" />
+          <div aria-hidden="true" className={styles.pandaBranch} />
+          <div aria-hidden="true" className={styles.pandaMark}>
             <span className={`${styles.pandaEar} ${styles.pandaEarLeft}`} />
             <span className={`${styles.pandaEar} ${styles.pandaEarRight}`} />
             <span className={`${styles.pandaEye} ${styles.pandaEyeLeft}`} />
             <span className={`${styles.pandaEye} ${styles.pandaEyeRight}`} />
             <span className={styles.pandaNose} />
           </div>
-          <p className="absolute bottom-6 right-7 text-right text-[0.62rem] font-semibold leading-5 tracking-[0.2em] text-white/65">
+          <p className="absolute bottom-6 right-7 z-10 rounded-lg bg-[#183f31]/70 px-3 py-2 text-right text-[0.62rem] font-semibold leading-5 tracking-[0.2em] text-white/65">
             RED PANDA
             <br />
-            NISHIYAMA ZOO
+            NISHIYAMA LENS
           </p>
         </div>
       </div>
+      <div className="mx-auto max-w-7xl"><HomePhotoCredits placements={["familyPanda"]} lang={lang} /></div>
     </section>
   );
 }
@@ -330,6 +345,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Que
       <GlobalHeader variant="overlay" path="/" key={languageHref("/", query, lang)} lang={lang} query={query} />
       <main lang={lang} className="overflow-hidden">
         <Hero lang={lang} query={query} />
+        <HeroImageCredits lang={lang} />
         <ParkHighlights lang={lang} />
         <LensIntroduction lang={lang} />
         <TodaysLenses recommendation={recommendation} lang={lang} query={query} />

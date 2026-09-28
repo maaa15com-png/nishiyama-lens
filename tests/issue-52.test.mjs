@@ -77,6 +77,8 @@ function loadUI(file, spots, recap, nearbyElement) {
     if(name==="@/components/nearby/NearbySpots")return{__esModule:true,default:()=>nearbyElement};
     if(name==="next/link")return{__esModule:true,default:props=>React.createElement("a",props)};
     if(name==="next/navigation")return{notFound:()=>{throw Error("NOT_FOUND")}};
+    if(name.endsWith(".json"))return JSON.parse(fs.readFileSync(path.resolve(path.dirname(file),name),"utf8"));
+    if(name==="next/image")return{__esModule:true,default:props=>{const p={...props};delete p.fill;delete p.unoptimized;return React.createElement("img",p)}};
     if(name.startsWith("@/"))return loadUI("src/"+name.slice(2)+(name.includes("components/")?".tsx":".ts"),spots,recap,nearbyElement);
     if(name.startsWith("."))return loadUI(path.resolve(path.dirname(file),name+".ts"),spots,recap,nearbyElement);
     return require(name);
@@ -95,7 +97,7 @@ test("long text is preserved and missing official URL never makes an empty link"
 });
 test("Recap retains current Lens, Course, Find and contextual next action with only one nearby section",async()=>{
   const {get}=await setup();const spots=await get(pandaId);const nearby=await nearbyElement(spots);
-  const recap={lens:{id:pandaId,name:"FAMILY × PANDA",title:"現在のLENS",companion:"FAMILY",interest:"PANDA"},course:{name:"現在のCourse",description:"コース説明",durationType:"MINUTES_30_60",durationMinutes:60},finds:[{id:"find",title:"今日の発見テーマ",description:"発見説明",season:null}],action:{href:"/courses/next",label:"既存の次のCTA",needsDiagnosis:false}};
+  const recap={lens:{id:pandaId,name:"FAMILY × PANDA",title:"現在のLENS",companion:"FAMILY",interest:"PANDA"},findSpotIds:{},course:{id:"keep",courseSpots:[],name:"現在のCourse",description:"コース説明",durationType:"MINUTES_30_60",durationMinutes:60},finds:[{id:"find",title:"今日の発見テーマ",description:"発見説明",season:null}],action:{href:"/courses/next",label:"既存の次のCTA",needsDiagnosis:false}};
   const page=loadUI("src/app/recap/page.tsx",spots,recap,nearby).default;
   const html=renderToStaticMarkup(await page({searchParams:Promise.resolve({courseId:"keep",lang:"en",foo:["1","2"]})}));
   for(const text of ["FAMILY × PANDA","現在のCourse","今日の発見テーマ","既存の次のCTA","lang=en","foo=1&amp;foo=2"])assert.ok(html.includes(text));

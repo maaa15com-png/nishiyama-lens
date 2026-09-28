@@ -1,3 +1,4 @@
+import RecapSummary from "@/components/recap/RecapSummary";
 import { navigationHref, type Query } from "@/lib/language";
 import RediscoveryLenses from "@/components/recap/RediscoveryLenses";
 import { getRediscoveryLenses } from "@/lib/server/rediscovery-lenses";
@@ -6,7 +7,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRecap } from "@/lib/server/recap";
-import { companionLabels, durationLabels, interestLabels } from "@/lib/lens/labels";
 
 export const metadata: Metadata = {
   title: "今日の振り返り | NISHIYAMA LENS",
@@ -21,34 +21,10 @@ export default async function RecapPage({ searchParams }: {
   if (typeof courseId !== "string") notFound();
   const recap = await getRecap(courseId);
   if (!recap) notFound();
-  const { course, lens, finds, action } = recap;
+  const { lens, action } = recap;
   const rediscovery = await getRediscoveryLenses(lens.id);
   return <>
-    <p className="text-xs font-bold tracking-widest text-[#796345]">TODAY’S RECAP</p>
-    <h1 className="mt-4 text-3xl font-medium leading-relaxed">今日選んだ、<br />西山公園の楽しみ方</h1>
-    <p className="mt-5 text-sm leading-8 text-[#53665a]">選んだテーマを振り返って、次に見つけたい景色へ。あなたのペースで、公園の楽しみ方を広げてみませんか。</p>
-    <section aria-labelledby="recap-lens" className="mt-8 rounded-3xl bg-[#173e30] p-6 text-white sm:p-8">
-      <h2 id="recap-lens" className="text-sm text-[#d7c69d]">今日のLENS</h2>
-      <p className="mt-3 break-words text-2xl font-semibold">{lens.name}</p>
-      <p className="mt-3 break-words text-lg leading-8">{lens.title}</p>
-      <p className="mt-3 text-sm">{companionLabels[lens.companion]} × {interestLabels[lens.interest]}</p>
-    </section>
-    <section aria-labelledby="recap-course" className="mt-6 rounded-3xl border border-[#e0e3d9] bg-[#fffdf8] p-6 sm:p-8">
-      <h2 id="recap-course" className="text-sm text-[#53665a]">今日選んだCourse</h2>
-      <p className="mt-3 break-words text-xl font-semibold">{course.name}</p>
-      <p className="mt-4 whitespace-pre-line break-words text-sm leading-8">{course.description}</p>
-      <p className="mt-4 text-sm">所要時間の目安：{durationLabels[course.durationType]}（約{course.durationMinutes}分）</p>
-      <p className="mt-4 text-xs leading-6 text-[#53665a]">選んだコースの紹介です。実際に訪れた場所や滞在時間の記録ではありません。</p>
-    </section>
-    {finds.length > 0 && <section aria-labelledby="recap-find" className="mt-6 rounded-3xl border border-[#c8b781] bg-[#f0eddb] p-6 sm:p-8">
-      <h2 id="recap-find" className="text-lg font-semibold">TODAY’S FIND</h2>
-      <p className="mt-3 text-sm leading-7">このコースで楽しめる発見テーマ。見つけたことも、次に探したいことも、あなたのペースで。</p>
-      <ul className="mt-5 space-y-5">{finds.map((find) => <li key={find.id}>
-        {find.season && <div className="mb-3 text-sm leading-7 text-[#53665a]"><p className="font-semibold">この季節の楽しみ：{find.season.name}</p>{find.season.description && <p className="mt-2 whitespace-pre-line break-words">{find.season.description}</p>}</div>}
-        <h3 className="break-words font-semibold leading-7">{find.title}</h3>
-        <p className="mt-2 whitespace-pre-line break-words text-sm leading-7">{find.description}</p>
-      </li>)}</ul>
-    </section>}
+    <RecapSummary recap={recap} query={query} />
     <p className="my-9 text-center text-lg leading-9">今日選んだ見方が、<br />あなたらしい公園の楽しみ方に。</p>
     <nav aria-label="次の楽しみ方">
       <Link href={navigationHref(action.href, query)} className="flex min-h-14 items-center justify-center rounded-3xl bg-[#174a36] px-6 py-4 text-center text-sm font-bold leading-7 text-white focus-visible:outline-2 focus-visible:outline-offset-4">{action.label}</Link>
@@ -56,5 +32,6 @@ export default async function RecapPage({ searchParams }: {
     </nav>
     <NearbySpots lensId={lens.id} />
     <RediscoveryLenses lenses={rediscovery} query={query} />
+    <aside className="mt-10 rounded-3xl bg-[#e9edde] p-7 text-center"><p className="text-xl font-semibold">また、西山公園で新しい発見を。</p><p className="mt-3 text-sm leading-7 text-[#53665a]">次に来る日も、楽しみになりますように。</p></aside>
   </>;
 }
