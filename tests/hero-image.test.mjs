@@ -5,6 +5,29 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { loadUI } from "./helpers/todays-lenses.mjs";
 const { heroImages, selectHeroImage, createHeroImageStore, HERO_IMAGE_STORAGE_KEY } = loadUI("src/lib/media/hero-image.ts");
 
+test("Hero: Japanese title keeps three semantic lines and both descriptions wrap without forced breaks", async () => {
+  const Home = loadUI("src/app/page.tsx", null).default;
+  for (const lang of ["ja", "en"]) {
+    const html = renderToStaticMarkup(await Home({ searchParams: Promise.resolve({ lang }) }));
+    const heading = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1];
+    assert.ok(heading);
+    if (lang === "ja") {
+      const lines = [...heading.matchAll(/<span class="block whitespace-nowrap">([^<]+)<\/span>/g)].map(match => match[1]);
+      assert.deepEqual(lines, ["見方を変えると、", "公園は", "旅になる。"]);
+      assert.equal(heading.replace(/<[^>]*>/g, ""), "見方を変えると、公園は旅になる。");
+    } else {
+      assert.equal(heading, "See the park anew.<br/>Let a journey begin.");
+    }
+    const description = html.match(/<\/h1><p\b([^>]*)>([\s\S]*?)<\/p>/);
+    assert.ok(description);
+    assert.match(description[1], /text-pretty/);
+    assert.doesNotMatch(description[2], /<br\b/);
+    assert.equal(description[2], lang === "ja"
+      ? "動物、季節、遊び、ひと休み。いつもの公園に、まだ知らない一日を見つけよう。"
+      : "Animals, seasons, play, and a moment to rest. Discover a new kind of day in a familiar park.");
+  }
+});
+
 test("Hero: three distinct presentation images are reachable; no cherry", () => {
   assert.deepEqual(Array.from(heroImages, i => i.slug), ["nishiyama-azaleas", "nishiyama-autumn-leaves", "generated-panda-sunlight"]);
   for (let n = 0; n < 3; n++) assert.equal(selectHeroImage(heroImages, null, () => (n + 0.5) / 3), heroImages[n]);
