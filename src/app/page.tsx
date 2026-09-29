@@ -90,19 +90,20 @@ function Hero({ lang, query }: HomeProps) {
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,35,25,0.38)_0%,rgba(8,35,25,0.08)_35%,rgba(8,35,25,0.78)_100%)]" />
 
       <div className="relative z-10 mx-auto flex min-h-[45rem] max-w-7xl items-end px-5 pb-14 pt-36 sm:min-h-[50rem] sm:px-8 sm:pb-20 lg:min-h-[54rem] lg:px-12 lg:pb-24">
-        <div className="max-w-3xl">
+        <div className={`min-w-0 w-full ${lang === "en" ? "max-w-3xl" : "max-w-5xl"}`}>
           <p className="mb-5 flex items-center gap-3 text-xs font-semibold tracking-[0.28em] text-white/80">
             <span className="h-px w-9 bg-white/60" />
             NISHIYAMA PARK, FUKUI
           </p>
-          <h1 className="text-[clamp(2.7rem,10vw,6.5rem)] font-medium leading-[0.95] tracking-[-0.04em] text-balance">
-            {lang === "en" ? "See the park anew." : "見方を変えると、"}
-            <br />
-            {lang === "en" ? "Let a journey begin." : "公園は旅になる。"}
+          <h1 className={`font-medium tracking-[-0.04em] text-balance ${lang === "en" ? "text-[clamp(2.7rem,10vw,6.5rem)] leading-[0.95]" : "text-[clamp(2rem,10vw,6.5rem)] leading-[1.15]"}`}>
+            {lang === "en" ? <>See the park anew.<br />Let a journey begin.</> : <>
+              <span className="block whitespace-nowrap">見方を変えると、</span>
+              <span className="block whitespace-nowrap">公園は</span>
+              <span className="block whitespace-nowrap">旅になる。</span>
+            </>}
           </h1>
-          <p className="mt-6 max-w-xl text-sm leading-7 text-white/82 sm:text-base sm:leading-8">
+          <p className={`mt-6 text-pretty text-sm leading-7 text-white/82 sm:text-base sm:leading-8 ${lang === "en" ? "max-w-xl" : "max-w-none"}`}>
             {lang === "en" ? "Animals, seasons, play, and a moment to rest. " : "動物、季節、遊び、ひと休み。"}
-            <br className="sm:hidden" />
             {lang === "en" ? "Discover a new kind of day in a familiar park." : "いつもの公園に、まだ知らない一日を見つけよう。"}
           </p>
           <div className="mt-8 sm:mt-10">
