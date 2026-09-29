@@ -21,6 +21,17 @@ test("Course photos use resolved Spot identity and first available image for Her
  assert.doesNotMatch(html,/generated-panda|徒歩\d|入園無料|ベビーカーOK|休憩スペースあり/);
  assert.match(html,/トイレあり/);
 });
+test("Course headings balance arbitrary long names without truncation or forced line breaks",()=>{
+ for(const name of ["家族でパンダに会うコース", "家族でパンダとひと休みを楽しむコース", "親子で楽しむ西山公園コース", "家族で季節の景色と動物たちをゆっくり楽しむ長いコース", "A relaxing family course to meet red pandas and enjoy the seasonal scenery"]){
+  const heading=render({...course,name}).match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/);
+  assert.ok(heading);
+  assert.equal(heading[1],name);
+  assert.match(heading[0],/\btext-balance\b/);
+  assert.match(heading[0],/\bbreak-words\b/);
+  assert.doesNotMatch(heading[0],/<br\b|truncate|line-clamp|whitespace-nowrap/);
+ }
+});
+
 test("Course photos without images preserve cards and do not borrow another Spot image",()=>{
  const noImages={...course,courseSpots:course.courseSpots.map(slot=>({...slot,spot:{...slot.spot,imageUrl:null}}))};
  const html=render(noImages,null);
