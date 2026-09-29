@@ -21,7 +21,7 @@ export default function CourseOverview({ course, lens, query }: { course: Course
         <div className="min-w-0 px-6 py-9 sm:p-10 lg:py-12">
           <p className="text-xs font-bold tracking-[0.18em] text-[#687953]">YOUR PARK EXPERIENCE</p>
           {lens && <p className="mt-5 inline-block rounded-full bg-[#edf1e7] px-4 py-2 text-xs font-bold tracking-wide">{lens.name} LENS</p>}
-          <h1 id="course-title" className="mt-5 break-words text-3xl font-semibold leading-relaxed tracking-tight sm:text-4xl">{course.name}</h1>
+          <h1 id="course-title" className="mt-5 text-balance break-words text-3xl font-semibold leading-relaxed tracking-tight sm:text-4xl">{course.name}</h1>
           {course.description && <p className="mt-5 whitespace-pre-line break-words text-sm leading-8 text-[#53665a]">{course.description}</p>}
           <div className="mt-7 flex flex-wrap gap-3 border-t border-[#dce3d6] pt-5 text-sm">
             <p><span aria-hidden="true">◷ </span>過ごし方の目安：<strong>{durationLabels[course.durationType]}</strong></p>

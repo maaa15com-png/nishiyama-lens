@@ -50,7 +50,7 @@ const highlights = (lang: Lang) => [
 const lensQuestions = (lang: Lang) => [
   { number: "01", label: lang === "en" ? "Who are you visiting with?" : "誰と行くか", en: "COMPANION" },
   { number: "02", label: lang === "en" ? "What would you like to enjoy?" : "何を楽しみたいか", en: "INTEREST" },
-  { number: "03", label: lang === "en" ? "How much time do you have?" : "どのくらい過ごせるか", en: "DURATION" },
+  { number: "03", label: lang === "en" ? "Choose your course duration" : "コース時間を選ぶ", en: "CHOOSE DURATION" },
 ] as const;
 
 function PrimaryCta({ lang, query, inverse = false }: HomeProps & { inverse?: boolean }) {
@@ -208,7 +208,7 @@ function LensIntroduction({ lang }: Pick<HomeProps, "lang">) {
           {lang === "en" ? "Nishiyama Park." : "西山公園の楽しみ方。"}
         </SectionHeading>
         <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-[#68736c] sm:text-base sm:leading-8">
-          {lang === "en" ? "Answer two questions to find a park experience that suits you today." : "２つの質問から、今のあなたにちょうどいい過ごし方をご提案します。"}
+          {lang === "en" ? "After answering two questions, you can choose a course that fits the time you have." : "2つの質問に答えたあと、過ごせる時間に合わせたコースを選べます。"}
         </p>
 
         <ol className="relative mt-12 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-5">

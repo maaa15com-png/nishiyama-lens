@@ -49,6 +49,22 @@ test("Home keeps four image cards, distinct sample panda and query-preserving CT
   }
 });
 
+test("Home JP/EN explains two diagnosis answers followed by choosing course duration", async () => {
+  const Home = loadUI("src/app/page.tsx", null).default;
+  for (const lang of ["ja", "en"]) {
+    const html = renderToStaticMarkup(await Home({ searchParams: Promise.resolve({ lang }) }));
+    const section = html.match(/<section[^>]*>(?:(?!<\/section>)[\s\S])*FIND YOUR LENS[\s\S]*?<\/section>/)?.[0];
+    assert.ok(section);
+    assert.equal((section.match(/<li\b/g) ?? []).length, 3);
+    assert.ok(section.includes(lang === "ja"
+      ? "2つの質問に答えたあと、過ごせる時間に合わせたコースを選べます。"
+      : "After answering two questions, you can choose a course that fits the time you have."));
+    assert.ok(section.includes(lang === "ja" ? "コース時間を選ぶ" : "Choose your course duration"));
+    assert.match(section, /CHOOSE DURATION/);
+    assert.doesNotMatch(section, /どのくらい過ごせるか|How much time do you have\?/);
+  }
+});
+
 test("Generated assets retain provenance and hashes without official licenses or Seed identities", () => {
   assert.equal(generated.length, 5);
   for (const image of generated) {
